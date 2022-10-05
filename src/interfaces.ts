@@ -20,10 +20,29 @@ export interface Doc {
 }
 
 export interface DocItem {
-  type: 'paragraph' | 'equation' | 'text' | 'linefeed' | 'exercise' | 'error';
+  type:
+    | 'paragraph'
+    | 'equation'
+    | 'text'
+    | 'linefeed'
+    | 'exercise'
+    | 'error'
+    | 'bold'
+    | 'italic'
+    | 'color'
+    | 'inline-math'
+    | 'variable'
+    | 'matrix-variable'
+    | 'integer-input';
   value: string;
   label: string;
   title: string;
   text: DocItem;
+  variables: { [id: string]: { type: string } };
+  instances: DocInstance[];
   items: DocItem[];
+}
+
+export interface DocInstance {
+  [id: string]: string;
 }
