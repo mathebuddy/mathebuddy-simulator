@@ -10,7 +10,7 @@ import * as esbuild from 'esbuild';
 
 esbuild.buildSync({
   platform: 'browser',
-  globalName: 'mathebuddySIMULATOR',
+  globalName: 'mathebuddySIM',
   minify: false, // TODO
   target: 'es2020',
   entryPoints: ['src/index.ts'],
