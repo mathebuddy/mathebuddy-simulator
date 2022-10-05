@@ -1,0 +1,30 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run mathe:buddy SIMULATOR Tests",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/test/_test_all.ts",
+      "args": [""],
+      "sourceMaps": true,
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "console": "integratedTerminal"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Run Current TS File",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["--nolazy", "-r", "ts-node/register/transpile-only"],
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${file}",
+      "sourceMaps": true,
+      "preLaunchTask": "tsc: build - tsconfig.json",
+      "console": "integratedTerminal"
+    }
+  ]
+}
