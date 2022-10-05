@@ -6,4 +6,18 @@
  * License: GPL-3.0-or-later
  */
 
-console.log('hello, world!');
+import { DocContainer } from './interfaces';
+import { Simulator } from './sim';
+
+export function createSim(data: DocContainer): Simulator {
+  const sim = new Simulator(data);
+  return sim;
+}
+
+export function generateDOM(
+  root: HTMLElement,
+  sim: Simulator,
+  documentAlias: string,
+): boolean {
+  return sim.generateDOM(root, documentAlias);
+}
