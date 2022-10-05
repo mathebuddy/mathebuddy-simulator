@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>mathe:buddy SIMULATOR</title>
+
+  <script src="node_modules/axios/dist/axios.min.js"></script>
+  <script src="node_modules/lz-string/libs/lz-string.min.js"></script>
+
+  <script src="node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+
+  <!-- TODO: ensure that current version is loaded! -->
+  <script src="build/mathebuddy-simulator.min.js"></script>
+</head>
+
+<body>
+  <div class="container">
+
+    <h1>mathe:buddy SIMULATOR</h1>
+
+    <div class="row">
+      <div id="device" class="col border border-secondary rounded" style="max-width:320px;">
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    axios
+      .get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', { responseType: 'arraybuffer' })
+      .then(function (response) {
+        console.log(response.data);
+        var documentData = btoa(String.fromCharCode.apply(null, new Uint8Array(response.data)));
+        documentData = LZString.decompressFromBase64(documentData);
+        documentData = JSON.parse(documentData);
+        console.log(documentData);
+        var device = document.getElementById('device');
+        var sim = mathebuddySIM.createSim(documentData);
+        if (mathebuddySIM.generateDOM(device, sim, 'intro') == false) {
+          console.log("ERROR: there is no document 'intro'");
+        }
+      });
+  </script>
+</body>
+
+</html>
