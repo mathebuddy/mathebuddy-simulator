@@ -7,12 +7,17 @@
  */
 
 import { Doc, DocContainer, DocItem } from './interfaces';
+import { MathJax } from './mathjax';
+import { matrix2tex } from './tex';
 
 export class Simulator {
   private data: DocContainer = null;
+  private exercise: DocItem = null;
+  private mathjaxInst: MathJax = null;
 
   constructor(data: DocContainer) {
     this.data = data;
+    this.mathjaxInst = new MathJax();
   }
 
   public generateDOM(parent: HTMLElement, documentAlias: string): boolean {
@@ -66,6 +71,61 @@ export class Simulator {
         span.innerHTML = item.value;
         return span;
       }
+      case 'inline-math': {
+        const span = document.createElement('span');
+        let tex = '';
+        for (const child of item.items) {
+          switch (child.type) {
+            case 'variable':
+              // TODO: randomly choose instance!
+              tex += this.exercise.instances[0][child.value];
+              break;
+            case 'matrix-variable':
+              // TODO: randomly choose instance!
+              tex += matrix2tex(this.exercise.instances[0][child.value]);
+              break;
+            case 'text':
+              tex += child.value;
+              break;
+          }
+        }
+        const html = this.mathjaxInst.tex2svgInline(tex);
+        span.innerHTML = ' ' + html + ' ';
+        return span;
+      }
+      case 'integer-input': {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.classList.add('form-control');
+        return input;
+      }
+      case 'bold':
+      case 'italic':
+      case 'color': {
+        const span = document.createElement('span');
+        switch (item.type) {
+          case 'bold':
+            span.style.fontWeight = 'bold';
+            break;
+          case 'italic':
+            span.style.fontStyle = 'italic';
+            break;
+          case 'color':
+            span.style.color = item.value;
+            break;
+        }
+        let space = document.createElement('span');
+        space.innerHTML = ' ';
+        span.appendChild(space);
+        for (const child of item.items) {
+          const c = this.genParagraph(child);
+          if (c != null) span.appendChild(c);
+        }
+        space = document.createElement('span');
+        space.innerHTML = ' ';
+        span.appendChild(space);
+        return span;
+      }
       case 'linefeed': {
         const span = document.createElement('span');
         span.innerHTML = '<br/>';
@@ -84,13 +144,15 @@ export class Simulator {
   }
 
   private genExercise(item: DocItem): HTMLElement {
+    this.exercise = item;
     console.log('generating exercise "' + item.title + '"');
     // container
     const div = document.createElement('div');
-    div.classList.add('border', 'border-dark', 'rounded');
+    //div.classList.add('border', 'border-dark', 'rounded');
     // title
-    const h2 = document.createElement('h2');
-    h2.innerHTML = item.title;
+    const h2 = document.createElement('h4');
+    h2.innerHTML =
+      '<i class="fa-solid fa-circle-question"></i>' + '&nbsp;' + item.title;
     div.appendChild(h2);
     // text
     //console.log('>>>>>');
