@@ -25,20 +25,66 @@
 <body>
   <div class="container text-center">
 
+    <br />
+
     <h1>mathe:buddy SIMULATOR</h1>
 
-    `x^2+y^2=z^2`
+    <br />
 
+    <!-- LOG SELECTION -->
+    <div class="row text-center">
+      <div class="col">
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio-JSON" value="option1"
+            onclick="logJson();" checked>
+          <label class="form-check-label" for="radio-JSON">JSON</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="inlineRadioOptions" id="radio-HTML" value="option2"
+            onclick="logHtml();">
+          <label class="form-check-label" for="radio-HTML">HTML</label>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <br />
+
+  <div class="container">
+
+    <!-- DEVICE AND LOG AREA -->
     <div class="row text-start">
-      <div id="device" class="col shadow m-0 p-0 bg-white" style="max-width:320px;">
-        <img src="img/app-bg.png" style="width:100%" />
-        <div id="device-content" class="p-2"></div>
+      <div id="device" class="col shadow m-0 p-0 bg-white"
+        style="width:320px;min-width:320px;max-width:320px;height:640px;min-height:640px;max-height:640px;">
+        <img src="img/app-bg.png" class="p-0" style="width:100%" />
+        <div id="device-content" class="py-0 px-2"
+          style="height: 500px; overflow-x:hidden; overflow-y: scroll; font-size: 85%; transform: translate(0,-5px);">
+        </div>
+      </div>
+      <div id="log" class="col bg-dark mx-3 small" style="max-height: 640px; overflow: scroll;">
+        <div id="log-content" class="p-2"></div>
       </div>
     </div>
 
   </div>
 
   <script>
+
+    var deviceContent = document.getElementById('device-content');
+    var logContent = document.getElementById('log-content');
+    var sim = null;
+
+    function logJson() {
+      if (sim == null) return;
+      logContent.innerHTML = '<div class="text-white">' + mathebuddySIM.getJSON(sim) + '</div>';
+    }
+
+    function logHtml() {
+      if (sim == null) return;
+      logContent.innerHTML = '<div class="text-white">' + mathebuddySIM.getHTML(sim) + '</div>';
+    }
+
     axios
       .get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', { responseType: 'arraybuffer' })
       .then(function (response) {
@@ -46,12 +92,12 @@
         var documentData = btoa(String.fromCharCode.apply(null, new Uint8Array(response.data)));
         documentData = LZString.decompressFromBase64(documentData);
         documentData = JSON.parse(documentData);
-        console.log(documentData);
-        var deviceContent = document.getElementById('device-content');
-        var sim = mathebuddySIM.createSim(documentData);
-        if (mathebuddySIM.generateDOM(deviceContent, sim, 'intro') == false) {
+        //console.log(documentData);
+        sim = mathebuddySIM.createSim(documentData, deviceContent);
+        if (mathebuddySIM.generateDOM(sim, 'intro') == false) {
           console.log("ERROR: there is no document 'intro'");
         }
+        logJson();
       });
   </script>
 </body>
