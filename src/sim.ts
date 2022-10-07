@@ -15,16 +15,40 @@ export class Simulator {
   private exercise: DocItem = null;
   private mathjaxInst: MathJax = null;
 
-  constructor(data: DocContainer) {
+  private parentDOM: HTMLElement = null;
+
+  constructor(data: DocContainer, parent: HTMLElement) {
     this.data = data;
+    this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
   }
 
-  public generateDOM(parent: HTMLElement, documentAlias: string): boolean {
-    parent.innerHTML = '';
+  public getHTML(): string {
+    let html = this.parentDOM.innerHTML;
+    html = html.replace(/</g, '&lt;');
+    html = html.replace(/>/g, '&gt;');
+    html = html.replace(/"/g, '&quot;');
+    html = html.replace(/'/g, '&#039;');
+    return html;
+  }
+
+  public getJSON(): string {
+    let json = JSON.stringify(this.data, null, 2);
+    json = json.replace(/</g, '&lt;');
+    json = json.replace(/>/g, '&gt;');
+    json = json.replace(/\n/g, '<br/>');
+    json = json.replace(/ /g, '&nbsp;');
+    json = json.replace(/"/g, '&quot;');
+    json = json.replace(/'/g, '&#039;');
+    return json;
+  }
+
+  public generateDOM(documentAlias: string): boolean {
+    this.parentDOM.innerHTML = '';
     for (const doc of this.data.documents) {
       if (doc.alias === documentAlias) {
-        parent.appendChild(this.genDoc(doc));
+        this.parentDOM.appendChild(this.genDoc(doc));
+        //console.log(this.parentDOM.innerHTML);
         return true;
       }
     }
@@ -33,6 +57,10 @@ export class Simulator {
 
   private genDoc(doc: Doc): HTMLElement {
     const dom = document.createElement('div');
+    const title = document.createElement('h4');
+    title.innerHTML = doc.title.toUpperCase();
+    title.classList.add('text-center', 'py-2');
+    dom.appendChild(title);
     for (const item of doc.items) {
       switch (item.type) {
         case 'paragraph':
@@ -47,6 +75,16 @@ export class Simulator {
             dom.appendChild(e);
             const br = document.createElement('br');
             dom.appendChild(br);
+          }
+          break;
+        case 'equation':
+          {
+            // TODO: check if error is set
+            // TODO: equation numbering
+            const p = document.createElement('p');
+            p.classList.add('text-center');
+            p.innerHTML = this.mathjaxInst.tex2svgBlock(item.value);
+            dom.appendChild(p);
           }
           break;
         default:
@@ -66,10 +104,30 @@ export class Simulator {
         }
         return p;
       }
+      case 'span': {
+        const s = document.createElement('span');
+        for (const child of item.items) {
+          const c = this.genParagraph(child);
+          if (c != null) s.appendChild(c);
+        }
+        return s;
+      }
       case 'text': {
         const span = document.createElement('span');
         span.innerHTML = item.value;
         return span;
+      }
+      case 'itemize': {
+        const ul = document.createElement('ul');
+        for (const child of item.items) {
+          const c = this.genParagraph(child);
+          if (c != null) {
+            const li = document.createElement('li');
+            li.appendChild(c);
+            ul.appendChild(li);
+          }
+        }
+        return ul;
       }
       case 'inline-math': {
         const span = document.createElement('span');
@@ -96,13 +154,16 @@ export class Simulator {
       case 'integer-input': {
         const input = document.createElement('input');
         input.type = 'text';
-        input.classList.add('form-control');
+        input.size = 5; // TODO
+        input.style.display = 'inline';
+        //input.classList.add('form-control');
         return input;
       }
       case 'bold':
       case 'italic':
       case 'color': {
         const span = document.createElement('span');
+        let color = '';
         switch (item.type) {
           case 'bold':
             span.style.fontWeight = 'bold';
@@ -111,7 +172,18 @@ export class Simulator {
             span.style.fontStyle = 'italic';
             break;
           case 'color':
-            span.style.color = item.value;
+            switch (item.value) {
+              case '1':
+                color = '#c56663';
+                break;
+              case '2':
+                color = 'green';
+                break;
+              case '3':
+                color = 'blue';
+                break;
+            }
+            span.style.color = color;
             break;
         }
         let space = document.createElement('span');
