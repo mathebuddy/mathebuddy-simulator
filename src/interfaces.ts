@@ -22,6 +22,7 @@ export interface Doc {
 export interface DocItem {
   type:
     | 'paragraph'
+    | 'span'
     | 'equation'
     | 'text'
     | 'linefeed'
@@ -33,7 +34,8 @@ export interface DocItem {
     | 'inline-math'
     | 'variable'
     | 'matrix-variable'
-    | 'integer-input';
+    | 'integer-input'
+    | 'itemize';
   value: string;
   label: string;
   title: string;
