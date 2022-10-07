@@ -9,15 +9,19 @@
 import { DocContainer } from './interfaces';
 import { Simulator } from './sim';
 
-export function createSim(data: DocContainer): Simulator {
-  const sim = new Simulator(data);
+export function createSim(data: DocContainer, root: HTMLElement): Simulator {
+  const sim = new Simulator(data, root);
   return sim;
 }
 
-export function generateDOM(
-  root: HTMLElement,
-  sim: Simulator,
-  documentAlias: string,
-): boolean {
-  return sim.generateDOM(root, documentAlias);
+export function generateDOM(sim: Simulator, documentAlias: string): boolean {
+  return sim.generateDOM(documentAlias);
+}
+
+export function getJSON(sim: Simulator): string {
+  return sim.getJSON();
+}
+
+export function getHTML(sim: Simulator): string {
+  return sim.getHTML();
 }
