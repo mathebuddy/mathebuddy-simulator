@@ -11,7 +11,7 @@ import * as esbuild from 'esbuild';
 esbuild.buildSync({
   platform: 'browser',
   globalName: 'mathebuddySIM',
-  minify: false, // TODO
+  minify: true, // TODO
   target: 'es2020',
   entryPoints: ['src/index.ts'],
   bundle: true,
