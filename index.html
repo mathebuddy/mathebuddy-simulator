@@ -32,11 +32,55 @@
 
       <h1>mathe:buddy SIMULATOR</h1>
 
-      <br />
+      <hr />
 
-      <!-- LOG SELECTION -->
+      <!-- TOOLBAR: FILE LIST, BUTTONS, LOG SELECTION -->
       <div class="row text-center">
         <div class="col">
+          <span id="selected-file-id"
+            >SELECT A FILE <i class="fa-solid fa-arrow-right-long"></i
+          ></span>
+          <span class="text-primary"><i class="fas fa-layer-group"></i></span>
+          <div
+            class="dropdown"
+            style="display: inline-block"
+            data-bs-toggle="tooltip"
+            data-bs-placement="left"
+            title="course selection"
+          >
+            <button
+              class="btn btn-sm btn-primary dropdown-toggle"
+              type="button"
+              id="courselist_button"
+              data-bs-toggle="dropdown"
+              onclick=""
+            ></button>
+            <ul id="courselist_dropdown_items" class="dropdown-menu">
+              <li><a class="dropdown-item" style="cursor: pointer">hm1</a></li>
+              <li><a class="dropdown-item" style="cursor: pointer">hm2</a></li>
+            </ul>
+          </div>
+
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+          <button
+            type="button"
+            onclick="refreshFileList();"
+            class="btn btn-sm btn-outline-dark"
+          >
+            refresh file list
+          </button>
+
+          <button
+            type="button"
+            onclick="selectFile(selectedFileIndex);"
+            class="btn btn-sm btn-outline-dark"
+          >
+            run
+          </button>
+
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
           <div class="form-check form-check-inline">
             <input
               class="form-check-input"
@@ -44,8 +88,19 @@
               name="inlineRadioOptions"
               id="radio-JSON"
               value="option1"
-              onclick="logJson();"
+              onclick="logInput();"
               checked
+            />
+            <label class="form-check-label" for="radio-JSON">input</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input
+              class="form-check-input"
+              type="radio"
+              name="inlineRadioOptions"
+              id="radio-JSON"
+              value="option2"
+              onclick="logJson();"
             />
             <label class="form-check-label" for="radio-JSON">JSON</label>
           </div>
@@ -55,13 +110,15 @@
               type="radio"
               name="inlineRadioOptions"
               id="radio-HTML"
-              value="option2"
+              value="option3"
               onclick="logHtml();"
             />
             <label class="form-check-label" for="radio-HTML">HTML</label>
           </div>
         </div>
       </div>
+
+      <hr />
     </div>
 
     <br />
@@ -107,7 +164,22 @@
     <script>
       var deviceContent = document.getElementById('device-content');
       var logContent = document.getElementById('log-content');
+      var input = ''; // MBL data
       var sim = null;
+
+      var files = [];
+      var selectedFileIndex = -1;
+
+      function logInput() {
+        if (sim == null) return;
+        let i = input.replace(/</g, '&lt;');
+        i = i.replace(/>/g, '&gt;');
+        i = i.replace(/\n/g, '<br/>');
+        i = i.replace(/ /g, '&nbsp;');
+        i = i.replace(/"/g, '&quot;');
+        i = i.replace(/'/g, '&#039;');
+        logContent.innerHTML = '<div class="text-white">' + i + '</div>';
+      }
 
       function logJson() {
         if (sim == null) return;
@@ -121,28 +193,102 @@
           '<div class="text-white">' + mathebuddySIM.getHTML(sim) + '</div>';
       }
 
-      axios
-        //.get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', {
-        .get(
-          'testdata/mathebuddy-public-courses/demo-basic/hello_COMPILED.hex',
-          {
-            responseType: 'arraybuffer',
-          },
-        )
-        .then(function (response) {
-          console.log(response.data);
-          var documentData = btoa(
-            String.fromCharCode.apply(null, new Uint8Array(response.data)),
-          );
-          documentData = LZString.decompressFromBase64(documentData);
-          documentData = JSON.parse(documentData);
-          //console.log(documentData);
-          sim = mathebuddySIM.createSim(documentData, deviceContent);
-          if (mathebuddySIM.generateDOM(sim, 'intro') == false) {
+      function refreshFileList() {
+        axios
+          .get('__FILES__', {
+            responseType: 'text',
+          })
+          .then(function (response) {
+            //console.log(response.data);
+            files = response.data.split('##');
+            //console.log(files);
+            const dropdown = document.getElementById(
+              'courselist_dropdown_items',
+            );
+            let html = '';
+            let i = 0;
+            for (const file of files) {
+              let onclick = 'selectFile(' + i + ');';
+              html +=
+                '<li><a onclick="' +
+                onclick +
+                '" class="dropdown-item" style="cursor: pointer">' +
+                file +
+                '</a></li>';
+              i++;
+            }
+            dropdown.innerHTML = html;
+          });
+      }
+
+      refreshFileList();
+
+      const filePath =
+        'testdata/mathebuddy-public-courses/demo-basic/hello.mbl';
+      const filePathCompiled =
+        filePath.substring(0, filePath.length - 4) + '_COMPILED.hex';
+
+      function selectFile(index) {
+        selectedFileIndex = index;
+        const path = files[index];
+
+        document.getElementById('selected-file-id').innerHTML = path;
+
+        //console.log('LOADING FILE ' + path);
+
+        axios.get(path, { responseType: 'text' }).then(function (response) {
+          //console.log('LOADED:');
+          //console.log(response.data);
+          input = response.data;
+          const course = mathebuddySIM.compile(input);
+          //console.log(course);
+          sim = mathebuddySIM.createSim(course, deviceContent);
+          if (mathebuddySIM.generateDOM(sim) == false) {
             console.log("ERROR: there is no document 'intro'");
           }
-          logJson();
+          logInput();
         });
+
+        return; // TODO
+
+        // get input data
+        axios
+          .get(filePath, {
+            responseType: 'text',
+          })
+          .then(function (response) {
+            input = response.data;
+            input = input.replace(/</g, '&lt;');
+            input = input.replace(/>/g, '&gt;');
+            input = input.replace(/\n/g, '<br/>');
+            input = input.replace(/ /g, '&nbsp;');
+            input = input.replace(/"/g, '&quot;');
+            input = input.replace(/'/g, '&#039;');
+          });
+        // get compiled course
+        axios
+          //.get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', {
+          .get(filePathCompiled, {
+            responseType: 'arraybuffer',
+          })
+          .then(function (response) {
+            //console.log(response.data);
+            var documentData = btoa(
+              String.fromCharCode.apply(null, new Uint8Array(response.data)),
+            );
+            documentData = LZString.decompressFromBase64(documentData);
+            documentData = JSON.parse(documentData);
+            //console.log(documentData);
+            sim = mathebuddySIM.createSim(documentData, deviceContent);
+            if (mathebuddySIM.generateDOM(sim) == false) {
+              console.log("ERROR: there is no document 'intro'");
+            }
+            //logJson();
+            logInput();
+          });
+      }
+
+      //refresh();
     </script>
   </body>
 </html>
