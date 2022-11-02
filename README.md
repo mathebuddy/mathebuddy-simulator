@@ -1,1 +1,137 @@
-# mathebuddy-simulator
+# mathe:buddy Simulator
+
+This repository implements a web-based simulation environment for the `mathe:buddy` app.
+
+![](img/screenshot.png)
+
+# Outline
+
+Implementation is ongoing. We plan to release ...
+
+1. An interactive _Integrated Development_ Environment that runs in the browser without any software dependencies [Release is planned for second half of 2023].
+2. Plugins for _Visual Studio Code_ [Release in the market place is planned for first quarter of 2023].
+
+By now, you have to run the simulator on a local computer. Installation and usage might be challenging - if you are not a developer, you should wait some time...
+
+# Committing Courses
+
+Yau are encouraged to use and test our toolchain! We will later allow anyone to create custom math-courses. .. BE PATIENT FOR THAT!
+
+# Installation
+
+Make sure you have `git`, `python3`, `npm` and `node` installed on your system.
+
+- Debian-based Linux:
+  ```
+  sudo apt install git python3 nodejs npm
+  ```
+- macOS:
+  First install `homebrew` package manager as described on [https://brew.sh](https://brew.sh). Then run the following commands in a terminal window
+  ```
+  brew install git python3 node
+  ```
+
+You now need to clone three _mathe:buddy_ repositories. Replace `YOUR_FAVORITE_DIRECTORY` by a local directory on your disk.
+
+```
+cd YOUR_FAVORITE_DIRECTORY
+git clone git@github.com:mathebuddy/mathebuddy-simulator.git
+git clone git@github.com:mathebuddy/mathebuddy-compiler.git
+git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
+```
+
+> Remark: it is essential that all three repositories are located next to each other!
+
+> WARNING: Never _(speak "N E V E R ! ! ! ! ! ! ")_ clone to iCloud/GoogleDrive/OneDrive/NextCloud/Sciebo/...!
+
+# Usage
+
+Change to directory `mathebuddy-simulator`
+
+```
+cd mathebuddy-simulator
+```
+
+> Tip: in macOS you can open the directory `mathebuddy-simulator` in the Finder and then open a terminal window in that location. Open `[Finder]` $\to$ `[Services]` $\to$ `[New Terminal at Folder]`.
+
+Run `server.py`:
+
+```
+python3 server.py
+```
+
+The following Read-Eval-Print-Loop (REPL) is provided.
+Choose a number and press `[ENTER]`.
+
+1. **update** [MUST be run first]
+
+- updates the repositories to the latest revisions on GitHub
+- installs the `npm` packages from `package.json`
+
+2. **make playground** [RECOMMENDED!!]
+
+- creates a playground directory in `mathebuddy-public-courses`.
+
+3. **start web server**
+
+- starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your your favorite browser. You should see the contents of screenshot above ("hello world" will be shown later!)
+
+- Select a file from the dropdown menu. All files with suffix `*.mbl` (mathe:buddy language) from repository `mathebuddy-public-courses` are listed. Open `../mathebuddy-public-courses/demo-basic/hello.mbl` for a hello world example. The compiler is run automatically and the simulator renders the result.
+
+- Use radio buttons `input`, `JSON` and `HTML` to show intermediate results:
+
+  - `input` is the source code of the opened `*.mbl` file
+  - `JSON` shows the output of the compiler. This intermediate language is both used in the simulator, as well as the app.
+  - `HTML` shows the HTML-code that is shown in the simulator. This feature is only intended for debugging purposes.
+
+- Button `refresh file list` updates the file list in the dropdown menu. Should be used in case that you rename / create a file in `mathebuddy-public-courses`.
+
+- Button `run` updates the simulator. Should be used after editing some of the files in `mathebuddy-public-courses`.
+
+4. **kill process at port 8314**
+
+- normally not needed
+- in case that the HTTP-server hangs up, this choice stops it
+
+5. **exit**
+
+- quits the Python script
+
+# Visual Studio Code (VS-Code)
+
+Files in repository `mathebuddy-public-courses` can be edited with a plaintext editor of choice.
+
+> Do **NOT** use M$ Word or LibreOffice to edit files, since word processors are not outputting plaintext files!
+
+We suggest do use Visual Studio Code to edit files, since we will provide a plugin for it in the future anyway. Visit [https://code.visualstudio.com](https://code.visualstudio.com) for more information.
+
+> Tip: On Linux you can install VS-Code via `sudo apt install code`. On macOS you can install it via `brew install code`.
+
+Open Visual Studio Code and open repository `mathebuddy-public-courses` on your disk.
+
+> WARNING: First start making changes in the playground!!
+
+# Committing Changes
+
+> WARNING: committing code to the public-course directory is yet only permitted to the mathe:buddy core team.
+
+Committing changes can be done on the command line via git:
+
+```
+cd YOUR_DIR/mathebuddy-public-courses
+git add --all
+git commit -m "YOUR COMMIT MESSAGE HERE"
+git push
+```
+
+## GitHub Desktop
+
+GitHub Desktop provides a nice graphical user interface to interact with GitHub projects (... and also other `git`-repositories). Follow the instructions from [https://desktop.github.com](https://desktop.github.com) and open GitHub Desktop.
+
+Choose `[File]` $\to$ `[add local repository]` in the main menu and choose `YOUR_DIR/mathebuddy-public-courses` on your local disk.
+
+GitHub Desktop will show every change in the repository.
+
+# Contact
+
+[https://app.f07-its.fh-koeln.de](https://app.f07-its.fh-koeln.de), technical director: andreas.schwenk@th-koeln.de
