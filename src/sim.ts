@@ -43,13 +43,22 @@ export class Simulator {
     return json;
   }
 
-  public generateDOM(documentAlias: string): boolean {
+  public generateDOM(documentAlias = ''): boolean {
     this.parentDOM.innerHTML = '';
-    for (const doc of this.data.documents) {
-      if (doc.alias === documentAlias) {
-        this.parentDOM.appendChild(this.genDoc(doc));
-        //console.log(this.parentDOM.innerHTML);
-        return true;
+    // if no alias is provided, then use the first document
+    if (documentAlias.length == 0) {
+      if (this.data.documents.length == 0) return false;
+      this.parentDOM.appendChild(this.genDoc(this.data.documents[0]));
+      return true;
+    }
+    // otherwise search for document with alias
+    else {
+      for (const doc of this.data.documents) {
+        if (doc.alias === documentAlias) {
+          this.parentDOM.appendChild(this.genDoc(doc));
+          //console.log(this.parentDOM.innerHTML);
+          return true;
+        }
       }
     }
     return false;
