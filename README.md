@@ -105,7 +105,7 @@ Files in repository `mathebuddy-public-courses` can be edited with a plaintext e
 
 > Do **NOT** use M$ Word or LibreOffice to edit files, since word processors are not outputting plaintext files!
 
-We suggest do use Visual Studio Code to edit files, since we will provide a plugin for it in the future anyway. Visit [https://code.visualstudio.com](https://code.visualstudio.com) for more information.
+We suggest do use Visual Studio Code to edit files, since we will provide a plugin for it in the future anyway. Visit [https://code.visualstudio.com](https://code.visualstudio.com) for install instructions.
 
 > Tip: On Linux you can install VS-Code via `sudo apt install code`. On macOS you can install it via `brew install code`.
 
@@ -128,11 +128,11 @@ git push
 
 ## GitHub Desktop
 
-GitHub Desktop provides a nice graphical user interface to interact with GitHub projects (... and also other `git`-repositories). Follow the instructions from [https://desktop.github.com](https://desktop.github.com) and open GitHub Desktop.
+GitHub Desktop provides a nice graphical user interface to interact with GitHub projects (... and also other `git`-repositories). Follow the install instructions from [https://desktop.github.com](https://desktop.github.com) and open GitHub Desktop.
 
 Choose `[File]` $\to$ `[add local repository]` in the main menu and choose `YOUR_DIR/mathebuddy-public-courses` on your local disk.
 
-GitHub Desktop will show every change in the repository.
+GitHub Desktop will show every current and past change in the repository.
 
 # Contact
 
