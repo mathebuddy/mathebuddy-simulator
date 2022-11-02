@@ -8,10 +8,10 @@ This repository implements a web-based simulation environment for the `mathe:bud
 
 Implementation is ongoing. We plan to release ...
 
-1. An interactive _Integrated Development_ Environment that runs in the browser without any software dependencies [Release is planned for second half of 2023].
+1. An interactive _Integrated Development Environment (IDE)_ that runs in the browser without any software dependencies [Release is planned for second half of 2023].
 2. Plugins for _Visual Studio Code_ [Release in the market place is planned for first quarter of 2023].
 
-By now, you have to run the simulator on a local computer. Installation and usage might be challenging - if you are not a developer, you should wait some time...
+By now, you have to run the simulator on a local computer. Installation and usage might be challenging - if you are not a developer, you should wait for the above mentioned releases...
 
 # Committing Courses
 
@@ -19,14 +19,14 @@ Yau are encouraged to use and test our toolchain! We will later allow anyone to 
 
 # Installation
 
-Make sure you have `git`, `python3`, `npm` and `node` installed on your system.
+Make sure you got `git`, `python3`, `npm` and `node` installed on your system.
 
 - Debian-based Linux:
   ```
   sudo apt install git python3 nodejs npm
   ```
 - macOS:
-  First install `homebrew` package manager as described on [https://brew.sh](https://brew.sh). Then run the following commands in a terminal window
+  First install `homebrew` package manager as described on [https://brew.sh](https://brew.sh). Then run the following commands in a terminal window:
   ```
   brew install git python3 node
   ```
