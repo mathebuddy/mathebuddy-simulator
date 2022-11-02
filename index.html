@@ -122,9 +122,13 @@
       }
 
       axios
-        .get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', {
-          responseType: 'arraybuffer',
-        })
+        //.get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', {
+        .get(
+          'testdata/mathebuddy-public-courses/demo-basic/hello_COMPILED.hex',
+          {
+            responseType: 'arraybuffer',
+          },
+        )
         .then(function (response) {
           console.log(response.data);
           var documentData = btoa(
