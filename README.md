@@ -136,12 +136,12 @@ GitHub Desktop will show every current and past change in the repository.
 
 # A day in the life of a content creator
 
-This base installation must only be done once.
+The base installation must only be done once.
 
 Daily procedure:
 
 1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser.
-2. Open the directory `mathebuddy-public-courses` Visual Studio Code.
+2. Open the directory `mathebuddy-public-courses` in Visual Studio Code.
 3. Open GitHub Desktop.
 4. Fetch the latest course updates for `mathebuddy-public-courses` in GitHub Desktop.
 5. Write courses to explain math to the world.
