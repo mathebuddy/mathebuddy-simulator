@@ -143,11 +143,12 @@ Daily procedure:
 1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser.
 2. Open the directory `mathebuddy-public-courses` Visual Studio Code.
 3. Open GitHub Desktop.
-4. Fetch the latest course updates of `mathebuddy-public-courses` in GitHub Desktop.
+4. Fetch the latest course updates for `mathebuddy-public-courses` in GitHub Desktop.
 5. Write courses to explain math to the world.
-6. Share your work with GitHub Desktop.
-7. If you are tired, then STOP.
-8. Go to step 4.
+6. Debug your courses in the simulator @ `https://localhost:8314`.
+7. Share your work with GitHub Desktop.
+8. If you are tired, then STOP.
+9. Go to step 4.
 
 # Contact
 
