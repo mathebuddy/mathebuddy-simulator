@@ -48,7 +48,7 @@ git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
 
 # Usage
 
-Change to directory `mathebuddy-simulator`
+Change to directory `mathebuddy-simulator`:
 
 ```
 cd mathebuddy-simulator
@@ -68,7 +68,7 @@ Choose a number and press `[ENTER]`.
 1. **`update`** [MUST be run first]
 
 - updates the repositories to the latest revisions on GitHub
-- installs the `npm` packages from `package.json`
+- installs the `npm` packages from `package.json` and compiles the sources.
 
 2. **`make playground`** [RECOMMENDED!!]
 
@@ -133,6 +133,21 @@ GitHub Desktop provides a nice graphical user interface to interact with GitHub 
 Choose `[File]` $\to$ `[add local repository]` in the main menu and choose `YOUR_DIR/mathebuddy-public-courses` on your local disk.
 
 GitHub Desktop will show every current and past change in the repository.
+
+# A day in the life of a content creator
+
+This base installation must only be done once.
+
+Daily procedure:
+
+1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser.
+2. Open the directory `mathebuddy-public-courses` Visual Studio Code.
+3. Open GitHub Desktop.
+4. Fetch the latest course updates of `mathebuddy-public-courses` in GitHub Desktop.
+5. Write courses to explain math to the world.
+6. Share your work with GitHub Desktop.
+7. If you are tired, then STOP.
+8. Go to step 4.
 
 # Contact
 
