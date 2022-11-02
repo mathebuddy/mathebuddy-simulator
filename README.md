@@ -65,16 +65,16 @@ python3 server.py
 The following Read-Eval-Print-Loop (REPL) is provided.
 Choose a number and press `[ENTER]`.
 
-1. **update** [MUST be run first]
+1. **`update`** [MUST be run first]
 
 - updates the repositories to the latest revisions on GitHub
 - installs the `npm` packages from `package.json`
 
-2. **make playground** [RECOMMENDED!!]
+2. **`make playground`** [RECOMMENDED!!]
 
-- creates a playground directory in `mathebuddy-public-courses`.
+- creates a playground directory in `mathebuddy-public-courses`, which is NOT synced.
 
-3. **start web server**
+3. **`start web server`**
 
 - starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your your favorite browser. You should see the contents of screenshot above ("hello world" will be shown later!)
 
@@ -90,12 +90,12 @@ Choose a number and press `[ENTER]`.
 
 - Button `run` updates the simulator. Should be used after editing some of the files in `mathebuddy-public-courses`.
 
-4. **kill process at port 8314**
+4. **`kill process at port 8314`**
 
 - normally not needed
 - in case that the HTTP-server hangs up, this choice stops it
 
-5. **exit**
+5. **`exit`**
 
 - quits the Python script
 
