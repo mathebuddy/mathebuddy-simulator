@@ -8,13 +8,22 @@
 
 import { DocContainer } from './interfaces';
 import { Simulator } from './sim';
+import { Compiler } from '@mathebuddy/mathebuddy-compiler/src/compiler';
+
+export function compile(src: string): DocContainer {
+  const compiler = new Compiler();
+  compiler.run(src);
+  const course = compiler.getCourse().toJSON();
+  //console.log(course);
+  return course as any as DocContainer;
+}
 
 export function createSim(data: DocContainer, root: HTMLElement): Simulator {
   const sim = new Simulator(data, root);
   return sim;
 }
 
-export function generateDOM(sim: Simulator, documentAlias: string): boolean {
+export function generateDOM(sim: Simulator, documentAlias = ''): boolean {
   return sim.generateDOM(documentAlias);
 }
 
