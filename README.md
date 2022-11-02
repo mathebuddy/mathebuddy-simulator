@@ -44,6 +44,8 @@ git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
 
 > WARNING: Never _(speak "N E V E R ! ! ! ! ! ! ")_ clone to iCloud/GoogleDrive/OneDrive/NextCloud/Sciebo/...!
 
+> TIP: use _GitHub Desktop_ to clone the repositories (refer to the end of this document).
+
 # Usage
 
 Change to directory `mathebuddy-simulator`
