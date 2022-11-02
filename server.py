@@ -6,6 +6,17 @@ import socketserver
 
 port = 8314
 
+print("mathe-buddy-simulator")
+
+for dependency in ['git', 'node', 'python3']:
+  res = os.popen('which ' + dependency).read()
+  if len(res) == 0:
+    print('ERROR: missing dependency "' + dependency + '"')
+    print('>> on Debian-based Linux run "sudo apt install ' + dependency + '"')
+    print('>> on macOS install homebrew https://brew.sh and then run "brew install ' + dependency + '"')
+    exit(-1)
+
+
 root = '../mathebuddy-public-courses/'
 if os.path.exists(root) == False:
   print('ERROR: you have to git-clone https://github.com/mathebuddy/mathebuddy-public-courses next to this repository')
@@ -84,17 +95,6 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
   def do_TEST(self):
     print('test')
-
-
-print("mathe-buddy-simulator")
-
-for dependency in ['git', 'node', 'python3']:
-  res = os.popen('which ' + dependency).read()
-  if len(res) == 0:
-    print('ERROR: missing dependency "' + dependency + '"')
-    print('>> on Debian-based Linux run "sudo apt install ' + dependency + '"')
-    print('>> on macOS install homebrew https://brew.sh and then run "brew install ' + dependency + '"')
-    exit(-1)
 
 # REPL
 while(True):
