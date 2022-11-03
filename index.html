@@ -27,17 +27,30 @@
   </head>
 
   <body>
-    <div class="container text-center">
+    <div class="container text-start">
       <br />
 
-      <h1>mathe:buddy SIMULATOR</h1>
-
-      <hr />
-
       <!-- TOOLBAR: FILE LIST, BUTTONS, LOG SELECTION -->
-      <div class="row text-center">
+      <div class="row text-start">
         <div class="col">
-          <span id="selected-file-id"
+          <img src="img/logo-large-en.svg" style="width: 256px" />
+
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+          <button
+            type="button"
+            onclick="selectFile(selectedFileIndex);"
+            class="btn btn-sm btn-success"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="simulate file"
+          >
+            <i class="fa-solid fa-person-running"></i>
+          </button>
+
+          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+          <span id="selected-file-id" class="text-primary"
             >SELECT A FILE <i class="fa-solid fa-arrow-right-long"></i
           ></span>
           <span class="text-primary"><i class="fas fa-layer-group"></i></span>
@@ -61,22 +74,15 @@
             </ul>
           </div>
 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
           <button
             type="button"
             onclick="refreshFileList();"
-            class="btn btn-sm btn-outline-dark"
+            class="btn btn-sm btn-primary"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="refresh file list"
           >
-            refresh file list
-          </button>
-
-          <button
-            type="button"
-            onclick="selectFile(selectedFileIndex);"
-            class="btn btn-sm btn-outline-dark"
-          >
-            run
+            <i class="fa-solid fa-arrows-rotate"></i>
           </button>
 
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -115,10 +121,10 @@
             />
             <label class="form-check-label" for="radio-HTML">HTML</label>
           </div>
+
+          &nbsp;&nbsp;&nbsp;&nbsp; <i>mathe:buddy SIMULATOR</i>
         </div>
       </div>
-
-      <hr />
     </div>
 
     <br />
@@ -213,7 +219,7 @@
                 '<li><a onclick="' +
                 onclick +
                 '" class="dropdown-item" style="cursor: pointer">' +
-                file +
+                file.replace('../mathebuddy-public-courses/', '') +
                 '</a></li>';
               i++;
             }
@@ -232,7 +238,10 @@
         selectedFileIndex = index;
         const path = files[index];
 
-        document.getElementById('selected-file-id').innerHTML = path;
+        document.getElementById('selected-file-id').innerHTML = path.replace(
+          '../mathebuddy-public-courses/',
+          '',
+        );
 
         //console.log('LOADING FILE ' + path);
 
