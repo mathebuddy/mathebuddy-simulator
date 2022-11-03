@@ -40,6 +40,12 @@ git clone git@github.com:mathebuddy/mathebuddy-compiler.git
 git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
 ```
 
+Developers of the core team should also clone the following private repository:
+
+```
+git clone git@github.com:mathebuddy/mathebuddy-private-courses.git
+```
+
 > Remark: it is essential that all three repositories are located next to each other!
 
 > WARNING: Never _(speak "N E V E R ! ! ! ! ! ! ")_ clone to iCloud/GoogleDrive/OneDrive/NextCloud/Sciebo/...!
