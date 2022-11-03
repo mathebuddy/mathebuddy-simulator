@@ -219,7 +219,9 @@
                 '<li><a onclick="' +
                 onclick +
                 '" class="dropdown-item" style="cursor: pointer">' +
-                file.replace('../mathebuddy-public-courses/', '') +
+                file
+                  .replace('../mathebuddy-public-courses/', 'PUBLIC/')
+                  .replace('../mathebuddy-private-courses/', 'PRIVATE/') +
                 '</a></li>';
               i++;
             }
@@ -238,10 +240,9 @@
         selectedFileIndex = index;
         const path = files[index];
 
-        document.getElementById('selected-file-id').innerHTML = path.replace(
-          '../mathebuddy-public-courses/',
-          '',
-        );
+        document.getElementById('selected-file-id').innerHTML = path
+          .replace('../mathebuddy-public-courses/', 'PUBLIC/')
+          .replace('../mathebuddy-private-courses/', 'PRIVATE/');
 
         //console.log('LOADING FILE ' + path);
 
