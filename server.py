@@ -1,3 +1,12 @@
+# mathe:buddy - eine gamifizierte Lern-App für die Hoehere Mathematik
+# (c) 2022 by TH Koeln
+# Author: Andreas Schwenk contact@compiler-construction.com
+# Funded by: FREIRAUM 2022, Stiftung Innovation in der Hochschullehre
+# License: GPL-3.0-or-later
+
+# this script is a command line tool to install, update
+# and run the mathe:buddy-simulator.
+
 import json
 import os
 import glob
@@ -27,26 +36,18 @@ if os.path.exists(root) == False:
   print('ERROR: you have to git-clone https://github.com/mathebuddy/mathebuddy-compiler next to this repository')
   exit(-1)
 
-def getFiles():
-  g = sorted(glob.glob(root + '**/*.mbl'))
-  #for file_path in g:
-  #  print(file_path)
-  return '##'.join(g)
 
-
+# handler for web server
 class Handler(http.server.BaseHTTPRequestHandler):
   def do_GET(self):
-
-    print(self.path)
-
+    # return all files in public-courses-repository
     if self.path == '/__FILES__':
-      files = getFiles()
+      files = '##'.join(sorted(glob.glob(root + '**/*.mbl')))
       self.send_response(200)
       self.send_header("Content-type", "text/plain")
       self.wfile.write(bytes(files, "utf-8"))
       return
-
-    # handle get file requests
+    # handler for file requests
     p = self.path
     if p.startswith('/mathebuddy-public-courses'):
       p = '..' + p
@@ -93,32 +94,49 @@ class Handler(http.server.BaseHTTPRequestHandler):
   #  print('post')
   #  pass
 
-  def do_TEST(self):
-    print('test')
-
 # REPL
 while(True):
   print("")
   print("Choose an option and press [ENTER]:")
   print("[1] update")
-  print("[2] start web server at http://localhost:" + str(port) + " Stop with shortcut [CTRL]+[C] or [CMD]+[C]")
-  print("[3] kill process at port " + str(port))
-  print("[4] exit")
-  choice = input()
+  print("[2] make playground")
+  print("[3] start web server at http://localhost:" + str(port) + " Stop with shortcut [CTRL]+[C] or [CMD]+[C]")
+  print("[4] kill web server (emergency option)")
+  print("[5] exit")
+  choice = input(">> ")
   if choice == "1":
+    # ===== UPDATE =====
     os.system("git pull") # TODO: same for compiler!
     os.system("npm install")
     os.system("npm run build")
   elif choice == "2":
+    # ===== MAKE PLAYGROUND =====
+    pg = "playground/"
+    os.system("mkdir -p " + root + pg)
+    f = open(root + pg + "hello.mbl", "w")
+    f.write("Hello World\n###########\n\nHello world from math buddy!\n")
+    f.close()
+  elif choice == "3":
+    # ===== START WEB SERVER =====
     # os.system("python3 -m http.server " + str(port))
-    handlerClass = Handler #http.server.SimpleHTTPRequestHandler
+    handlerClass = Handler
     with socketserver.TCPServer(("", port), handlerClass) as httpd:
       print('... started server at http://localhost:' + str(port))
       httpd.serve_forever()
-  elif choice == "3":
-    # TODO!
-    pass
   elif choice == "4":
+    # ===== KILL WEB SERVER =====
+    res = os.popen('lsof -i :' + str(port)).read()
+    if len(res) == 0:
+      print("... there is no process listening to port " + str(port))
+    else:
+      print(res)
+      print("The web server is still running.")
+      print("The process id of the concerned process is denoted below PID.")
+      print("Run 'sudo kill -9 PID' (replace PID) from a terminal window.")
+      print("(Tip: The process may terminate automatically; just wait some seconds)")
+  elif choice == "5":
+    # ===== EXIT =====
     exit(0)
   else:
+    # ===== INVALID CHOICE =====
     print('ERROR: invalid choice!!')
