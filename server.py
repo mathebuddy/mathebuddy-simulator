@@ -70,6 +70,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
     elif p.endswith('.gif'):
       self.send_header("Content-type", "image/gif")
       binary = True
+    elif p.endswith('.svg'):
+      self.send_header("Content-type", "image/svg+xml")
+    elif p.endswith('.ico'):
+      return # ignore!
     elif p.endswith('.css'):
       self.send_header("Content-type", "text/css")
     elif p.endswith('.mbl'):
