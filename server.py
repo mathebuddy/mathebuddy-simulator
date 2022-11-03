@@ -26,13 +26,15 @@ for dependency in ['git', 'node', 'python3']:
     exit(-1)
 
 
-root = '../mathebuddy-public-courses/'
-if os.path.exists(root) == False:
+root_public = '../mathebuddy-public-courses/'
+root_private = '../mathebuddy-private-courses/'
+
+if os.path.exists(root_public) == False:
   print('ERROR: you have to git-clone https://github.com/mathebuddy/mathebuddy-public-courses next to this repository')
   exit(-1)
 
 compiler_dir = '../mathebuddy-compiler/'
-if os.path.exists(root) == False:
+if os.path.exists(compiler_dir) == False:
   print('ERROR: you have to git-clone https://github.com/mathebuddy/mathebuddy-compiler next to this repository')
   exit(-1)
 
@@ -42,14 +44,18 @@ class Handler(http.server.BaseHTTPRequestHandler):
   def do_GET(self):
     # return all files in public-courses-repository
     if self.path == '/__FILES__':
-      files = '##'.join(sorted(glob.glob(root + '**/*.mbl')))
+      files = ''
+      if os.path.exists(root_private):
+        files += '##'.join(sorted(glob.glob(root_private + '**/*.mbl')))
+        files += '##'
+      files += '##'.join(sorted(glob.glob(root_public + '**/*.mbl')))
       self.send_response(200)
       self.send_header("Content-type", "text/plain")
       self.wfile.write(bytes(files, "utf-8"))
       return
     # handler for file requests
     p = self.path
-    if p.startswith('/mathebuddy-public-courses'):
+    if p.startswith('/mathebuddy-public-courses') or p.startswith('/mathebuddy-private-courses'):
       p = '..' + p
     elif p.startswith('/'):
       p = p[1:]
@@ -116,8 +122,8 @@ while(True):
   elif choice == "2":
     # ===== MAKE PLAYGROUND =====
     pg = "playground/"
-    os.system("mkdir -p " + root + pg)
-    f = open(root + pg + "hello.mbl", "w")
+    os.system("mkdir -p " + root_public + pg)
+    f = open(root_public + pg + "hello.mbl", "w")
     f.write("Hello World\n###########\n\nHello world from math buddy!\n")
     f.close()
   elif choice == "3":
