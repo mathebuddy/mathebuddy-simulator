@@ -40,9 +40,14 @@ git clone https://github.com/mathebuddy/mathebuddy-compiler.git
 git clone https://github.com/mathebuddy/mathebuddy-public-courses.git
 ```
 
-Developers of the core team should also clone the following private repository:
+Developers of the core team should use a SSH key pair; see 
+[https://docs.github.com/en/authentication/connecting-to-github-with-ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh); and also clone the private repository:
 
 ```
+cd YOUR_FAVORITE_DIRECTORY
+git clone git@github.com:mathebuddy/mathebuddy-simulator.git
+git clone git@github.com:mathebuddy/mathebuddy-compiler.git
+git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
 git clone git@github.com:mathebuddy/mathebuddy-private-courses.git
 ```
 
