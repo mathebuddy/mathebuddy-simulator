@@ -1,6 +1,8 @@
 # mathe:buddy Simulator
 
-This repository implements a web-based simulation environment for the `mathe:buddy` app.
+<!-- start-for-website -->
+
+We provide a web-based simulation environment for the `mathe:buddy` app.
 
 ![](img/screenshot.png)
 
@@ -40,7 +42,7 @@ git clone https://github.com/mathebuddy/mathebuddy-compiler.git
 git clone https://github.com/mathebuddy/mathebuddy-public-courses.git
 ```
 
-Developers of the core team should use a SSH key pair; see 
+Developers of the core team should use a SSH key pair; see
 [https://docs.github.com/en/authentication/connecting-to-github-with-ssh](https://docs.github.com/en/authentication/connecting-to-github-with-ssh); and also clone the private repository:
 
 ```
