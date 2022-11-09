@@ -7,7 +7,9 @@
  */
 
 import * as esbuild from 'esbuild';
+import { execSync } from 'child_process';
 
+// ---- build ----
 esbuild.buildSync({
   platform: 'browser',
   globalName: 'mathebuddySIM',
@@ -17,3 +19,14 @@ esbuild.buildSync({
   bundle: true,
   outfile: 'build/mathebuddy-simulator.min.js',
 });
+
+// ---- convert README.md to README.html ----
+const date = new Date().toISOString().slice(0, 10);
+execSync("sed -e '1,/<!-- start-for-website -->/d' README.md > __tmp.md");
+execSync(
+  'pandoc -s __tmp.md --metadata title="MATHE:BUDDY SIMULATOR" --metadata author="" --metadata date="' +
+    date +
+    '"  --css README.css --self-contained -o README.html',
+);
+execSync('rm __tmp.md');
+// TODO: --mathjax may be needed, but results in large file, if --self-contained option is provided...
