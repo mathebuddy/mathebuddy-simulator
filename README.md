@@ -39,6 +39,7 @@ You now need to clone three _mathe:buddy_ repositories. Replace `YOUR_FAVORITE_D
 cd YOUR_FAVORITE_DIRECTORY
 git clone https://github.com/mathebuddy/mathebuddy-simulator.git
 git clone https://github.com/mathebuddy/mathebuddy-compiler.git
+git clone https://github.com/mathebuddy/mathebuddy-smpl.git
 git clone https://github.com/mathebuddy/mathebuddy-public-courses.git
 ```
 
@@ -49,6 +50,7 @@ Developers of the core team should use a SSH key pair; see
 cd YOUR_FAVORITE_DIRECTORY
 git clone git@github.com:mathebuddy/mathebuddy-simulator.git
 git clone git@github.com:mathebuddy/mathebuddy-compiler.git
+git clone git@github.com:mathebuddy/mathebuddy-smpl.git
 git clone git@github.com:mathebuddy/mathebuddy-public-courses.git
 git clone git@github.com:mathebuddy/mathebuddy-private-courses.git
 ```
