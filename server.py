@@ -52,6 +52,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
       self.send_response(200)
       self.send_header("Content-type", "text/plain")
       self.wfile.write(bytes(files, "utf-8"))
+      # TODO: BUG IN SAFARI FOR http://localhost:8314/__FILES__
       return
     # handler for file requests
     p = self.path
@@ -63,7 +64,9 @@ class Handler(http.server.BaseHTTPRequestHandler):
       p = 'index.html'
     self.send_response(200)
     binary = False
-    if p.endswith('.html'):
+    if p.endswith('.map'):
+      self.send_header("Content-type", "application/json")
+    elif p.endswith('.html'):
       self.send_header("Content-type", "text/html")
     elif p.endswith('.js'):
       self.send_header("Content-type", "application/javascript")
@@ -91,13 +94,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
       print('server.py does not support file type of "' + p + '"')
       exit(-1)
     self.end_headers()
+    contents = {}
     if binary:
-      f = open(p, 'rb')
-      contents = f.read()
+      try:
+        f = open(p, 'rb')
+        contents = f.read()
+      except:
+        pass # TODO: handle error
       self.wfile.write(bytes(contents))
     else:
-      f = open(p, 'r')
-      contents = f.read()
+      try:
+        f = open(p, 'r')
+        contents = f.read()
+      except:
+        pass # TODO: handle error
       self.wfile.write(bytes(contents, "utf-8"))
 
   #def do_POST(self):
@@ -116,8 +126,12 @@ while(True):
   choice = input(">> ")
   if choice == "1":
     # ===== UPDATE =====
-    os.system("git pull") # TODO: same for compiler!
-    os.system("npm install")
+    os.system("cd ../mathebuddy-compiler/ && git pull")
+    os.system("cd ../mathebuddy-compiler/ && npm install")
+    os.system("cd ../mathebuddy-smpl/ && git pull")
+    os.system("cd ../mathebuddy-smpl/ && npm install")
+    os.system("cd ./ && git pull")
+    os.system("cd ./ npm install")
     os.system("npm run build")
   elif choice == "2":
     # ===== MAKE PLAYGROUND =====
