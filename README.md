@@ -21,16 +21,16 @@ Yau are encouraged to use and test our toolchain! We will later allow anyone to 
 
 # Installation
 
-Make sure you got `git`, `python3`, `npm` and `node` installed on your system.
+Make sure you got `git`, `python3`, `npm`, `node` and `pandoc` installed on your system.
 
 - Debian-based Linux:
   ```
-  sudo apt install git python3 nodejs npm
+  sudo apt install git python3 nodejs npm pandoc
   ```
 - macOS:
   First install `homebrew` package manager as described on [https://brew.sh](https://brew.sh). Then run the following commands in a terminal window:
   ```
-  brew install git python3 node
+  brew install git python3 node pandoc
   ```
 
 You now need to clone three _mathe:buddy_ repositories. Replace `YOUR_FAVORITE_DIRECTORY` by a local directory on your disk.
