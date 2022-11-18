@@ -2,6 +2,13 @@
 
 <!-- start-for-website -->
 
+---
+
+**NOTE**
+This installation guide is in work-in-progress state.
+
+---
+
 We provide a web-based simulation environment for the `mathe:buddy` app.
 
 ![](img/screenshot.png)
