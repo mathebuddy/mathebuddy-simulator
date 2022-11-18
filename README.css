@@ -86,10 +86,11 @@ blockquote {
     padding-left: 1em;
     border-left: 2px solid #e6e6e6;
     color: #606060;*/
-  margin: 0em 0 -0.75em 0;
-  padding: 0;
-  /*border: 2px solid;*/
-  text-align: center;
+  margin: 5px 0 5px 0;
+  padding: 0px 15px 0px 15px;
+  border: 1px solid;
+  font-style: italic;
+  /*text-align: center;*/
 }
 code {
   font-family: Menlo, Monaco, 'Lucida Console', Consolas, monospace;
