@@ -35,6 +35,8 @@ Make sure you got `git`, `python3`, `npm`, `node` and `pandoc` installed on your
 
 You now need to clone three _mathe:buddy_ repositories. Replace `YOUR_FAVORITE_DIRECTORY` by a local directory on your disk.
 
+> TIP: use [GitHub Desktop](https://desktop.github.com) to clone the repositories (refer to the end of this document).
+
 ```
 cd YOUR_FAVORITE_DIRECTORY
 git clone https://github.com/mathebuddy/mathebuddy-simulator.git
@@ -57,9 +59,7 @@ git clone git@github.com:mathebuddy/mathebuddy-private-courses.git
 
 > Remark: it is essential that all three repositories are located next to each other!
 
-> WARNING: Never _(speak "N E V E R ! ! ! ! ! ! ")_ clone to iCloud/GoogleDrive/OneDrive/NextCloud/Sciebo/...!
-
-> TIP: use _GitHub Desktop_ to clone the repositories (refer to the end of this document).
+> WARNING: Never(!!) clone to iCloud / GoogleDrive / OneDrive / NextCloud / Sciebo / ...!
 
 # Usage
 
@@ -91,7 +91,7 @@ Choose a number and press `[ENTER]`.
 
 3. **`start web server`**
 
-- starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your your favorite browser. You should see the contents of screenshot above ("hello world" will be shown later!)
+- starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your favorite browser (WARNING: currently only [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/) is supported). You should see the contents of screenshot above ("hello world" will be shown later!)
 
 - Select a file from the dropdown menu. All files with suffix `*.mbl` (mathe:buddy language) from repository `mathebuddy-public-courses` are listed. Open `../mathebuddy-public-courses/demo-basic/hello.mbl` for a hello world example. The compiler is run automatically and the simulator renders the result.
 
@@ -122,7 +122,7 @@ Files in repository `mathebuddy-public-courses` can be edited with a plaintext e
 
 We suggest do use Visual Studio Code to edit files, since we will provide a plugin for it in the future anyway. Visit [https://code.visualstudio.com](https://code.visualstudio.com) for install instructions.
 
-> Tip: On Linux you can install VS-Code via `sudo apt install code`. On macOS you can install it via `brew install code`.
+> Tip: On Linux you can install VS-Code via `sudo apt install code`. On macOS you can install it via `brew install visual-studio-code`.
 
 Open Visual Studio Code and open repository `mathebuddy-public-courses` on your disk.
 
@@ -155,7 +155,7 @@ The base installation must only be done once.
 
 Daily procedure:
 
-1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser.
+1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser (WARNING: currently only [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/) is supported).
 2. Open the directory `mathebuddy-public-courses` in Visual Studio Code.
 3. Open GitHub Desktop.
 4. Fetch the latest course updates for `mathebuddy-public-courses` in GitHub Desktop.
@@ -165,6 +165,4 @@ Daily procedure:
 8. If you are tired, then STOP.
 9. Go to step 4.
 
-# Contact
-
-[https://app.f07-its.fh-koeln.de](https://app.f07-its.fh-koeln.de), technical director: andreas.schwenk@th-koeln.de
+_Author: Andreas Schwenk, TH Köln_
