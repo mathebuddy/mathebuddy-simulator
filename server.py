@@ -126,6 +126,7 @@ while(True):
   choice = input(">> ")
   if choice == "1":
     # ===== UPDATE =====
+    os.system("cd ../mathebuddy-public-courses/ && git pull")
     os.system("cd ../mathebuddy-compiler/ && git pull")
     os.system("cd ../mathebuddy-compiler/ && npm install")
     os.system("cd ../mathebuddy-smpl/ && git pull")
