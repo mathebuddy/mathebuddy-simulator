@@ -30,5 +30,8 @@
     "Stiftung",
     "testcourse",
     "testdata"
-  ]
+  ],
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.python"
+  }
 }
