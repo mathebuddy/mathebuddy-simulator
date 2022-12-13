@@ -39,7 +39,18 @@
 
           <button
             type="button"
-            onclick="selectFile(selectedFileIndex);"
+            onclick="refreshFileList();"
+            class="btn btn-sm btn-success"
+            data-bs-toggle="tooltip"
+            data-bs-placement="top"
+            title="refresh file tree"
+          >
+            <i class="fa-solid fa-arrows-rotate"></i>
+          </button>
+
+          <button
+            type="button"
+            onclick="run();"
             class="btn btn-sm btn-success"
             data-bs-toggle="tooltip"
             data-bs-placement="top"
@@ -50,10 +61,11 @@
 
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-          <span id="selected-file-id" class="text-primary"
-            >SELECT A FILE <i class="fa-solid fa-arrow-right-long"></i
-          ></span>
           <span class="text-primary"><i class="fas fa-layer-group"></i></span>
+
+          <span id="file-menu"></span>
+
+          <!--
           <div
             class="dropdown"
             style="display: inline-block"
@@ -73,17 +85,8 @@
               <li><a class="dropdown-item" style="cursor: pointer">hm2</a></li>
             </ul>
           </div>
-
-          <button
-            type="button"
-            onclick="refreshFileList();"
-            class="btn btn-sm btn-primary"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="refresh file list"
-          >
-            <i class="fa-solid fa-arrows-rotate"></i>
-          </button>
+          <span id="selected-file-id" class="text-primary"></span>
+          -->
 
           &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
@@ -122,7 +125,7 @@
             <label class="form-check-label" for="radio-HTML">HTML</label>
           </div>
 
-          &nbsp;&nbsp;&nbsp;&nbsp; <i>mathe:buddy SIMULATOR</i>
+          <!--&nbsp;&nbsp;&nbsp;&nbsp; <i>mathe:buddy SIMULATOR</i>-->
         </div>
       </div>
     </div>
@@ -199,34 +202,68 @@
           '<div class="text-white">' + mathebuddySIM.getHTML(sim) + '</div>';
       }
 
-      function refreshFileList() {
-        axios
-          .get('__FILES__', {
-            responseType: 'text',
-          })
-          .then(function (response) {
-            //console.log(response.data);
-            files = response.data.split('##');
-            //console.log(files);
-            const dropdown = document.getElementById(
-              'courselist_dropdown_items',
-            );
-            let html = '';
-            let i = 0;
-            for (const file of files) {
-              let onclick = 'selectFile(' + i + ');';
-              html +=
-                '<li><a onclick="' +
-                onclick +
-                '" class="dropdown-item" style="cursor: pointer">' +
-                file
-                  .replace('../mathebuddy-public-courses/', 'PUBLIC/')
-                  .replace('../mathebuddy-private-courses/', 'PRIVATE/') +
-                '</a></li>';
-              i++;
+      var selectedPath = [];
+      var dropdownElements = [];
+
+      function appendFileDropdown(data, depth) {
+        const dropdown = document.createElement('div');
+        dropdownElements[depth] = dropdown;
+        document.getElementById('file-menu').appendChild(dropdown);
+        dropdown.classList.add('dropdown');
+        dropdown.style.display = 'inline-block';
+        dropdown.setAttribute('data-bs-toggle', 'tooltip');
+        dropdown.setAttribute('data-bs-placement', 'left');
+        dropdown.title = 'course selection';
+        const button = document.createElement('button');
+        dropdown.appendChild(button);
+        button.classList.add('btn', 'btn-sm', 'btn-primary', 'dropdown-toggle');
+        button.type = 'button';
+        button.setAttribute('data-bs-toggle', 'dropdown');
+        const ul = document.createElement('ul');
+        dropdown.appendChild(ul);
+        ul.classList.add('dropdown-menu');
+        const fileId = document.createElement('span');
+        dropdown.appendChild(fileId);
+        fileId.classList.add('text-primary');
+        fileId.innerHTML = '&nbsp;(nothing selected)&nbsp;';
+        const dataSortedKeys = Object.keys(data).sort();
+        for (const file of dataSortedKeys) {
+          const isDirectory = Object.keys(data[file]).length > 0;
+          const li = document.createElement('li');
+          ul.appendChild(li);
+          const a = document.createElement('a');
+          li.append(a);
+          a.classList.add('dropdown-item');
+          a.style.cursor = 'pointer';
+          a.innerHTML = '' + file + (isDirectory ? '/' : '');
+          a.onclick = function (event) {
+            fileId.innerHTML =
+              '&nbsp;' +
+              file
+                .replace('../mathebuddy-public-courses', 'PUBLIC')
+                .replace('../mathebuddy-private-courses', 'PRIVATE') +
+              (isDirectory ? '/' : '') +
+              '&nbsp;';
+            selectedPath[depth] = file;
+            selectedPath.length = depth + 1;
+            //console.log(selectedPath);
+            for (let i = depth + 1; i < dropdownElements.length; i++) {
+              document
+                .getElementById('file-menu')
+                .removeChild(dropdownElements[i]);
             }
-            dropdown.innerHTML = html;
-          });
+            dropdownElements.length = depth + 1;
+            if (isDirectory) {
+              appendFileDropdown(data[file], depth + 1);
+            }
+          };
+        }
+      }
+
+      function refreshFileList() {
+        axios.get('__FILES__').then(function (response) {
+          appendFileDropdown(response.data, 0);
+        });
       }
 
       refreshFileList();
@@ -235,6 +272,19 @@
         'testdata/mathebuddy-public-courses/demo-basic/hello.mbl';
       const filePathCompiled =
         filePath.substring(0, filePath.length - 4) + '_COMPILED.hex';
+
+      function run() {
+        const path = selectedPath.join('/');
+        if (path.endsWith('.mbl') == false) {
+          console.log('error: path "' + path + '" is invalid for running!');
+          return;
+        }
+        console.log('running file ' + path);
+
+        // TODO
+      }
+
+      // TODO: THE FOLLOWING CODE IS OLD!!
 
       function selectFile(index) {
         selectedFileIndex = index;
