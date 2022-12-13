@@ -11,11 +11,12 @@ import { Simulator } from './sim';
 import { Compiler } from '@mathebuddy/mathebuddy-compiler/src/compiler';
 
 export function compile(src: string): DocContainer {
-  const compiler = new Compiler();
+  /*const compiler = new Compiler();
   compiler.run(src);
   const course = compiler.getCourse().toJSON();
   //console.log(course);
-  return course as any as DocContainer;
+  return course as any as DocContainer;*/
+  return null; // TODO
 }
 
 export function createSim(data: DocContainer, root: HTMLElement): Simulator {
