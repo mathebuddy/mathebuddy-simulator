@@ -98,7 +98,7 @@ Choose a number and press `[ENTER]`.
 
 3. **`start web server`**
 
-- starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your favorite browser (WARNING: currently only [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/) is supported). You should see the contents of screenshot above ("hello world" will be shown later!)
+- starts a web server at port 8314. Open [http://localhost:8314](http://localhost:8314) in your favorite browser. You should see the contents of screenshot above ("hello world" will be shown later!)
 
 - Select a file from the dropdown menu. All files with suffix `*.mbl` (mathe:buddy language) from repository `mathebuddy-public-courses` are listed. Open `../mathebuddy-public-courses/demo-basic/hello.mbl` for a hello world example. The compiler is run automatically and the simulator renders the result.
 
@@ -162,7 +162,7 @@ The base installation must only be done once.
 
 Daily procedure:
 
-1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser (WARNING: currently only [Mozilla Firefox](https://www.mozilla.org/en-US/firefox/new/) is supported).
+1. Start `server.py`: first do the updates and then run the web-server. Open `https://localhost:8314` in your favorite browser.
 2. Open the directory `mathebuddy-public-courses` in Visual Studio Code.
 3. Open GitHub Desktop.
 4. Fetch the latest course updates for `mathebuddy-public-courses` in GitHub Desktop.
