@@ -261,17 +261,12 @@
       }
 
       function refreshFileList() {
-        axios.get('__FILES__').then(function (response) {
+        axios.get('list_files').then(function (response) {
           appendFileDropdown(response.data, 0);
         });
       }
 
       refreshFileList();
-
-      const filePath =
-        'testdata/mathebuddy-public-courses/demo-basic/hello.mbl';
-      const filePathCompiled =
-        filePath.substring(0, filePath.length - 4) + '_COMPILED.hex';
 
       function run() {
         const path = selectedPath.join('/');
@@ -281,12 +276,21 @@
         }
         console.log('running file ' + path);
 
+        axios.post('load_files', { path: path }).then(function (response) {
+          const course = mathebuddySIM.compile(path, response.data);
+          sim = mathebuddySIM.createSim(course, deviceContent);
+          if (mathebuddySIM.generateDOM(sim) == false) {
+            console.log('ERROR: failed to generate DOM');
+          }
+          logInput();
+        });
+
         // TODO
       }
 
       // TODO: THE FOLLOWING CODE IS OLD!!
 
-      function selectFile(index) {
+      /*function selectFile(index) {
         selectedFileIndex = index;
         const path = files[index];
 
@@ -346,7 +350,7 @@
             //logJson();
             logInput();
           });
-      }
+      }*/
 
       //refresh();
     </script>
