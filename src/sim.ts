@@ -6,19 +6,25 @@
  * License: GPL-3.0-or-later
  */
 
-import { Doc, DocContainer, DocItem } from './interfaces';
+import {
+  MBL_Course,
+  MBL_Course_Debug,
+} from '@mathebuddy/mathebuddy-compiler/src/dataCourse';
+import { MBL_Exercise } from '@mathebuddy/mathebuddy-compiler/src/dataExercise';
+import { MBL_Level } from '@mathebuddy/mathebuddy-compiler/src/dataLevel';
+
 import { MathJax } from './mathjax';
 import { matrix2tex } from './tex';
 
 export class Simulator {
-  private data: DocContainer = null;
-  private exercise: DocItem = null;
+  private course: MBL_Course = null;
+  private exercise: MBL_Exercise = null;
   private mathjaxInst: MathJax = null;
 
   private parentDOM: HTMLElement = null;
 
-  constructor(data: DocContainer, parent: HTMLElement) {
-    this.data = data;
+  constructor(course: MBL_Course, parent: HTMLElement) {
+    this.course = course;
     this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
   }
@@ -33,7 +39,7 @@ export class Simulator {
   }
 
   public getJSON(): string {
-    let json = JSON.stringify(this.data, null, 2);
+    let json = JSON.stringify(this.course.toJSON(), null, 2);
     json = json.replace(/</g, '&lt;');
     json = json.replace(/>/g, '&gt;');
     json = json.replace(/\n/g, '<br/>');
@@ -43,17 +49,38 @@ export class Simulator {
     return json;
   }
 
-  public generateDOM(documentAlias = ''): boolean {
+  public generateDOM(): boolean {
     this.parentDOM.innerHTML = '';
-    // if no alias is provided, then use the first document
+
+    const h4 = document.createElement('h4');
+    h4.innerHTML = 'SIMULATOR WILL BE AVAILABLE SOON!!';
+
+    switch (this.course.debug) {
+      case MBL_Course_Debug.Level:
+        this.parentDOM.appendChild(
+          this.generateLevel(this.course.chapters[0].levels[0]),
+        );
+        this.parentDOM.appendChild(h4);
+        break;
+      default:
+        console.log(
+          'ERROR: Simulator.generateDOM(..): unimplemented ' +
+            this.course.debug,
+        );
+        break;
+    }
+
+    return true;
+
+    /*// if no alias is provided, then use the first document
     if (documentAlias.length == 0) {
-      if (this.data.documents.length == 0) return false;
-      this.parentDOM.appendChild(this.genDoc(this.data.documents[0]));
+      if (this.course.documents.length == 0) return false;
+      this.parentDOM.appendChild(this.genDoc(this.course.documents[0]));
       return true;
     }
     // otherwise search for document with alias
     else {
-      for (const doc of this.data.documents) {
+      for (const doc of this.course.documents) {
         if (doc.alias === documentAlias) {
           this.parentDOM.appendChild(this.genDoc(doc));
           //console.log(this.parentDOM.innerHTML);
@@ -61,10 +88,16 @@ export class Simulator {
         }
       }
     }
-    return false;
+    return false;*/
   }
 
-  private genDoc(doc: Doc): HTMLElement {
+  private generateLevel(level: MBL_Level): HTMLElement {
+    const span = document.createElement('span');
+    span.innerHTML = level.title;
+    return span;
+  }
+
+  /*private genDoc(doc: Doc): HTMLElement {
     const dom = document.createElement('div');
     const title = document.createElement('h4');
     title.innerHTML = doc.title.toUpperCase();
@@ -241,5 +274,5 @@ export class Simulator {
 
     div.appendChild(this.genParagraph(item.text));
     return div;
-  }
+  }*/
 }
