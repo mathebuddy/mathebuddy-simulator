@@ -5,7 +5,16 @@
 ---
 
 **NOTE**
-This installation guide is in work-in-progress state.
+
+- This installation guide is in work-in-progress state.
+
+---
+
+---
+
+**NOTE**
+
+- If you installed mathe:buddy simulator before 2022-12-14, then run `git stash` and `git pull` in Terminal, right before running `python3 server.py`. This must be done only once.
 
 ---
 
