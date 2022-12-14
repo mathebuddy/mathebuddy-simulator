@@ -9,7 +9,6 @@
 
 import json
 import os
-import glob
 import http.server
 import socketserver
 
@@ -66,7 +65,7 @@ if os.path.exists(compiler_dir) == False:
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         # return all files in public-courses-repository
-        if self.path == '/__FILES__':
+        if self.path == '/list_files':
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
@@ -128,9 +127,20 @@ class Handler(http.server.BaseHTTPRequestHandler):
                     pass  # TODO: handle error
                 self.wfile.write(bytes(contents, "utf-8"))
 
-    # def do_POST(self):
-    #  print('post')
-    #  pass
+    def do_POST(self):
+        if self.path == '/load_files':
+            content_len = int(self.headers.get('Content-Length'))
+            post_body = json.loads(
+                self.rfile.read(content_len).decode('utf-8'))
+            path = post_body['path']
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            files = dict()
+            f = open(path, 'r')
+            files[path] = f.read()
+            filesJSON = json.dumps(files, indent=4)
+            self.wfile.write(filesJSON.encode("utf-8"))
 
 
 # REPL
