@@ -6,26 +6,38 @@
  * License: GPL-3.0-or-later
  */
 
-import { DocContainer } from './interfaces';
-import { Simulator } from './sim';
 import { Compiler } from '@mathebuddy/mathebuddy-compiler/src/compiler';
+import { MBL_Course } from '@mathebuddy/mathebuddy-compiler/src/dataCourse';
 
-export function compile(src: string): DocContainer {
-  /*const compiler = new Compiler();
-  compiler.run(src);
-  const course = compiler.getCourse().toJSON();
-  //console.log(course);
-  return course as any as DocContainer;*/
-  return null; // TODO
+import { Simulator } from './sim';
+
+export function compile(
+  path: string,
+  files: { [fileId: string]: string },
+): MBL_Course {
+  function load(path: string): string {
+    if (path in files) return files[path];
+    else return '';
+  }
+  const compiler = new Compiler();
+  try {
+    compiler.compile(path, load);
+  } catch (e) {
+    // TODO: error handling
+    console.log(e);
+  }
+  const course = compiler.getCourse();
+  console.log(course.toJSON());
+  return course;
 }
 
-export function createSim(data: DocContainer, root: HTMLElement): Simulator {
+export function createSim(data: MBL_Course, root: HTMLElement): Simulator {
   const sim = new Simulator(data, root);
   return sim;
 }
 
-export function generateDOM(sim: Simulator, documentAlias = ''): boolean {
-  return sim.generateDOM(documentAlias);
+export function generateDOM(sim: Simulator): boolean {
+  return sim.generateDOM();
 }
 
 export function getJSON(sim: Simulator): string {
