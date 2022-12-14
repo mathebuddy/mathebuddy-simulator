@@ -21,19 +21,12 @@ esbuild.buildSync({
   outfile: 'build/mathebuddy-simulator.min.js',
 });
 
-// ---- convert README.md to README.html ----
-/*const date = new Date().toISOString().slice(0, 10);
-execSync("sed -e '1,/<!-- start-for-website -->/d' README.md > __tmp.md");
-execSync(
-  'pandoc -s __tmp.md --metadata title="MATHE:BUDDY SIMULATOR" --metadata author="" --metadata date="' +
-    date +
-    '"  --css README.css --embed-resources --standalone -o README.html',
-);
-execSync('rm __tmp.md');
-// TODO: --mathjax may be needed, but results in large file, if --self-contained option is provided...
-*/
+if (process.argv.length > 2 && process.argv[2] === '--no-docs') {
+  console.log('skip building docs');
+  process.exit(0);
+}
 
-// ---- convert README.md to README.html ----
+// ---- convert README.md to sim.html ----
 
 const date = new Date().toISOString().slice(0, 10);
 execSync("sed -e '1,/<!-- start-for-website -->/d' README.md > __tmp.md");
