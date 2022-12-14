@@ -163,7 +163,7 @@ while (True):
         os.system("cd ../mathebuddy-smpl/ && npm install")
         os.system("cd ./ && git pull")
         os.system("cd ./ && npm install")
-        os.system("npm run build")
+        os.system("node ./build.mjs --no-docs")
     elif choice == "2":
         # ===== MAKE PLAYGROUND =====
         pg = "playground/"
