@@ -27,7 +27,7 @@ export function compile(
     console.log(e);
   }
   const course = compiler.getCourse();
-  console.log(course.toJSON());
+  //console.log(course.toJSON());
   return course;
 }
 
