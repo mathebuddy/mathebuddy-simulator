@@ -17,7 +17,22 @@ export function matrix2tex(m: string): string {
   tex = tex.replace(/\[/g, '');
   tex = tex.replace(/\]/g, '');
   tex = '\\begin{pmatrix}' + tex + '\\end{pmatrix}';
-  console.log(m);
-  console.log(tex);
+  //console.log(m);
+  //console.log(tex);
+  return tex;
+}
+
+export function set2tex(s: string): string {
+  const tex = s.replace(/{/g, '\\{').replace(/}/g, '\\}');
+  return tex;
+}
+
+export function term2tex(t: string): string {
+  if (t.startsWith('(') && t.endsWith(')')) t = t.substring(1, t.length - 1);
+  let tex = t.replace(/\*/g, ' \\cdot ');
+  tex = tex.replace(/sin\(/g, '\\sin(');
+  tex = tex.replace(/cos\(/g, '\\cos(');
+  tex = tex.replace(/tan\(/g, '\\tan(');
+  tex = tex.replace(/exp\(/g, '\\exp(');
   return tex;
 }
