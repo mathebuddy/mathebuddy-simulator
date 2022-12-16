@@ -30,7 +30,7 @@ export class MathJax {
     });
   }
 
-  convertHTML(htmlIn: string): string {
+  /*convertHTML(htmlIn: string): string {
     let htmlOut = '';
     let eqn = '';
     let isEqn = false;
@@ -55,15 +55,29 @@ export class MathJax {
       else htmlOut += ch;
     }
     return htmlOut;
+  }*/
+
+  addMacros(equation: string): string {
+    return (
+      '\\def\\R{\\mathbb{R}}' +
+      '\\def\\N{\\mathbb{N}}' +
+      '\\def\\Z{\\mathbb{Z}}' +
+      '\\def\\C{\\mathbb{C}}' +
+      '\\def\\Q{\\mathbb{Q}}' +
+      '\\newcommand{\\mat}[1]{\\begin{pmatrix}#1\\end{pmatrix}}' +
+      equation
+    );
   }
 
   tex2svgInline(equation: string): string {
+    equation = this.addMacros(equation);
     return this.adaptor.innerHTML(
       this.html.convert(equation, { display: false }),
     );
   }
 
   tex2svgBlock(equation: string): string {
+    equation = this.addMacros(equation);
     return this.adaptor.innerHTML(
       this.html.convert(equation, { display: true }),
     );
