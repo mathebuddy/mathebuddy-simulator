@@ -31,98 +31,113 @@
       <br />
 
       <!-- TOOLBAR: FILE LIST, BUTTONS, LOG SELECTION -->
-      <div class="row text-start">
-        <div class="col">
-          <img src="img/logo-large-en.svg" style="width: 256px" />
-
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-          <button
-            type="button"
-            onclick="refreshFileList();"
-            class="btn btn-sm btn-success"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="refresh file tree"
-          >
-            <i class="fa-solid fa-arrows-rotate"></i>
-          </button>
-
-          <button
-            type="button"
-            onclick="run();"
-            class="btn btn-sm btn-success"
-            data-bs-toggle="tooltip"
-            data-bs-placement="top"
-            title="simulate file"
-          >
-            <i class="fa-solid fa-person-running"></i>
-          </button>
-
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-          <span class="text-primary"><i class="fas fa-layer-group"></i></span>
-
-          <span id="file-menu"></span>
-
-          <!--
+      <div class="row text-start px-0">
+        <div class="col px-0">
           <div
-            class="dropdown"
-            style="display: inline-block"
+            class="p-3 border border-success shadow-lg"
+            onclick="location.href='https://app.f07-its.fh-koeln.de'"
+            style="display: inline; cursor: pointer"
             data-bs-toggle="tooltip"
-            data-bs-placement="left"
-            title="course selection"
+            data-bs-placement="bottom"
+            title="go to mathe:buddy website"
+          >
+            <img src="img/logo.svg" style="height: 36px" />
+            &nbsp; SIMULATOR
+          </div>
+
+          &nbsp;&nbsp;
+
+          <div
+            class="p-3 border border-success shadow-lg"
+            style="display: inline"
           >
             <button
-              class="btn btn-sm btn-primary dropdown-toggle"
               type="button"
-              id="courselist_button"
-              data-bs-toggle="dropdown"
-              onclick=""
-            ></button>
-            <ul id="courselist_dropdown_items" class="dropdown-menu">
-              <li><a class="dropdown-item" style="cursor: pointer">hm1</a></li>
-              <li><a class="dropdown-item" style="cursor: pointer">hm2</a></li>
-            </ul>
+              onclick="run();"
+              class="btn btn-sm btn-success"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="simulate file"
+            >
+              <i class="fa-solid fa-person-running"></i>
+            </button>
           </div>
-          <span id="selected-file-id" class="text-primary"></span>
-          -->
 
-          &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          &nbsp;&nbsp;
 
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              id="radio-JSON"
-              value="option1"
-              onclick="logInput();"
-              checked
-            />
-            <label class="form-check-label" for="radio-JSON">input</label>
+          <div
+            class="p-3 border border-primary shadow-lg"
+            style="display: inline"
+          >
+            <span class="text-primary"><i class="fas fa-layer-group"></i></span>
+            &nbsp;
+            <button
+              type="button"
+              onclick="refreshFileList();"
+              class="btn btn-sm btn-primary"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="refresh file tree"
+            >
+              <i class="fa-solid fa-arrows-rotate"></i>
+            </button>
+            <span id="file-menu"></span>
           </div>
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              id="radio-JSON"
-              value="option2"
-              onclick="logJson();"
-            />
-            <label class="form-check-label" for="radio-JSON">JSON</label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="inlineRadioOptions"
-              id="radio-HTML"
-              value="option3"
-              onclick="logHtml();"
-            />
-            <label class="form-check-label" for="radio-HTML">HTML</label>
+
+          &nbsp;&nbsp;
+
+          <div class="p-3 border border-dark shadow-lg" style="display: inline">
+            <span class="text-dark"><i class="fa-solid fa-eye"></i></span>
+            &nbsp;
+            <div
+              class="form-check form-check-inline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="show MBL code"
+            >
+              <input
+                class="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="radio-MBL"
+                value="option1"
+                onclick="logMbl();"
+                checked
+              />
+              <label class="form-check-label" for="radio-JSON">MBL</label>
+            </div>
+            <div
+              class="form-check form-check-inline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="show JSON output"
+            >
+              <input
+                class="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="radio-JSON"
+                value="option2"
+                onclick="logJson();"
+              />
+              <label class="form-check-label" for="radio-JSON">JSON</label>
+            </div>
+            <div
+              class="form-check form-check-inline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="show HTML code"
+            >
+              <input
+                class="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="radio-HTML"
+                value="option3"
+                onclick="logHtml();"
+              />
+              <label class="form-check-label" for="radio-HTML">HTML</label>
+            </div>
           </div>
 
           <!--&nbsp;&nbsp;&nbsp;&nbsp; <i>mathe:buddy SIMULATOR</i>-->
@@ -168,20 +183,34 @@
           <div id="log-content" class="p-2"></div>
         </div>
       </div>
+
+      <br />
+      <p class="fw-lighter">
+        mathe:buddy - a gamified learning app for higher mathematics &nbsp;
+        &nbsp;&nbsp; &copy; TH Köln &nbsp;&nbsp;
+        <a href="https://app.f07-its.fh-koeln.de/"
+          >https://app.f07-its.fh-koeln.de/</a
+        >
+        &nbsp;&nbsp;&nbsp;&nbsp; send bugs to:
+        <a href="https://www.th-koeln.de/personen/andreas.schwenk/"
+          >Andreas Schwenk</a
+        >
+      </p>
     </div>
 
     <script>
+      document.getElementById('radio-MBL').checked = true;
+
       var deviceContent = document.getElementById('device-content');
       var logContent = document.getElementById('log-content');
-      var input = ''; // MBL data
+      var mblCode = ''; // MBL data
       var sim = null;
 
       var files = [];
       var selectedFileIndex = -1;
 
-      function logInput() {
-        if (sim == null) return;
-        let i = input.replace(/</g, '&lt;');
+      function logMbl() {
+        let i = mblCode.replace(/</g, '&lt;');
         i = i.replace(/>/g, '&gt;');
         i = i.replace(/\n/g, '<br/>');
         i = i.replace(/ /g, '&nbsp;');
@@ -206,13 +235,17 @@
       var dropdownElements = [];
 
       function appendFileDropdown(data, depth) {
+        const span = document.createElement('span');
+        span.innerHTML = '&nbsp;&nbsp;';
+        document.getElementById('file-menu').appendChild(span);
+
         const dropdown = document.createElement('div');
         dropdownElements[depth] = dropdown;
         document.getElementById('file-menu').appendChild(dropdown);
         dropdown.classList.add('dropdown');
         dropdown.style.display = 'inline-block';
         dropdown.setAttribute('data-bs-toggle', 'tooltip');
-        dropdown.setAttribute('data-bs-placement', 'left');
+        dropdown.setAttribute('data-bs-placement', 'bottom');
         dropdown.title = 'course selection';
         const button = document.createElement('button');
         dropdown.appendChild(button);
@@ -225,7 +258,8 @@
         const fileId = document.createElement('span');
         dropdown.appendChild(fileId);
         fileId.classList.add('text-primary');
-        fileId.innerHTML = '&nbsp;(nothing selected)&nbsp;';
+        fileId.innerHTML =
+          '&nbsp;<i class="fa-solid fa-folder-open"></i>&nbsp;';
         const dataSortedKeys = Object.keys(data).sort();
         for (const file of dataSortedKeys) {
           const isDirectory = Object.keys(data[file]).length > 0;
@@ -235,7 +269,12 @@
           li.append(a);
           a.classList.add('dropdown-item');
           a.style.cursor = 'pointer';
-          a.innerHTML = '' + file + (isDirectory ? '/' : '');
+          a.innerHTML =
+            '' +
+            file
+              .replace('../mathebuddy-public-courses', 'PUBLIC')
+              .replace('../mathebuddy-private-courses', 'PRIVATE') +
+            (isDirectory ? '/' : '');
           a.onclick = function (event) {
             fileId.innerHTML =
               '&nbsp;' +
@@ -255,6 +294,8 @@
             dropdownElements.length = depth + 1;
             if (isDirectory) {
               appendFileDropdown(data[file], depth + 1);
+            } else {
+              run();
             }
           };
         }
@@ -262,14 +303,19 @@
 
       function refreshFileList() {
         axios.get('list_files').then(function (response) {
+          selectedPath = [];
+          dropdownElements = [];
+          document.getElementById('file-menu').innerHTML = '';
           appendFileDropdown(response.data, 0);
         });
       }
 
       refreshFileList();
 
-      function run() {
-        const path = selectedPath.join('/');
+      function run(staticPath = '') {
+        let path = '';
+        if (staticPath.length > 0) path = staticPath;
+        else path = selectedPath.join('/');
         if (path.endsWith('.mbl') == false) {
           console.log('error: path "' + path + '" is invalid for running!');
           return;
@@ -277,82 +323,28 @@
         console.log('running file ' + path);
 
         axios.post('load_files', { path: path }).then(function (response) {
-          const course = mathebuddySIM.compile(path, response.data);
+          const files = response.data;
+          const course = mathebuddySIM.compile(path, files);
           sim = mathebuddySIM.createSim(course, deviceContent);
           if (mathebuddySIM.generateDOM(sim) == false) {
             console.log('ERROR: failed to generate DOM');
           }
-          logInput();
+          mblCode = files[path];
+          logMbl();
         });
-
-        // TODO
       }
 
-      // TODO: THE FOLLOWING CODE IS OLD!!
+      // run default example
+      run('../mathebuddy-public-courses/demo-basic/hello.mbl');
+      //run('../mathebuddy-public-courses/demo-ma2/ma2-3.mbl');
 
-      /*function selectFile(index) {
-        selectedFileIndex = index;
-        const path = files[index];
-
-        document.getElementById('selected-file-id').innerHTML = path
-          .replace('../mathebuddy-public-courses/', 'PUBLIC/')
-          .replace('../mathebuddy-private-courses/', 'PRIVATE/');
-
-        //console.log('LOADING FILE ' + path);
-
-        axios.get(path, { responseType: 'text' }).then(function (response) {
-          //console.log('LOADED:');
-          //console.log(response.data);
-          input = response.data;
-          const course = mathebuddySIM.compile(input);
-          //console.log(course);
-          sim = mathebuddySIM.createSim(course, deviceContent);
-          if (mathebuddySIM.generateDOM(sim) == false) {
-            console.log("ERROR: there is no document 'intro'");
-          }
-          logInput();
-        });
-
-        return; // TODO
-
-        // get input data
-        axios
-          .get(filePath, {
-            responseType: 'text',
-          })
-          .then(function (response) {
-            input = response.data;
-            input = input.replace(/</g, '&lt;');
-            input = input.replace(/>/g, '&gt;');
-            input = input.replace(/\n/g, '<br/>');
-            input = input.replace(/ /g, '&nbsp;');
-            input = input.replace(/"/g, '&quot;');
-            input = input.replace(/'/g, '&#039;');
-          });
-        // get compiled course
-        axios
-          //.get('testdata/chapter1.txt_COMPILED_COMPRESSED.hex', {
-          .get(filePathCompiled, {
-            responseType: 'arraybuffer',
-          })
-          .then(function (response) {
-            //console.log(response.data);
-            var documentData = btoa(
-              String.fromCharCode.apply(null, new Uint8Array(response.data)),
-            );
-            documentData = LZString.decompressFromBase64(documentData);
-            documentData = JSON.parse(documentData);
-            //console.log(documentData);
-            sim = mathebuddySIM.createSim(documentData, deviceContent);
-            if (mathebuddySIM.generateDOM(sim) == false) {
-              console.log("ERROR: there is no document 'intro'");
-            }
-            //logJson();
-            logInput();
-          });
-      }*/
-
-      //refresh();
+      // update button tooltips
+      var tooltipTriggerList = [].slice.call(
+        document.querySelectorAll('[data-bs-toggle="tooltip"]'),
+      );
+      var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+      });
     </script>
   </body>
 </html>
