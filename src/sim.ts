@@ -41,6 +41,11 @@ import { htmlSafeString } from './html';
 import { MathJax } from './mathjax';
 import { matrix2tex, set2tex, term2tex } from './tex';
 
+const yellow = '#ceab39';
+const red = '#c56663';
+const green = '#b1c752';
+const inputColor = yellow;
+
 export class Simulator {
   private log = '';
 
@@ -98,9 +103,11 @@ export class Simulator {
   private generateLevel(level: MBL_Level): HTMLElement {
     const root = document.createElement('div');
     // title
-    const title = document.createElement('h4');
-    title.innerHTML = level.title.toUpperCase();
-    title.classList.add('text-center', 'py-2');
+    const title = document.createElement('h2');
+    title.innerHTML =
+      '<i class="fa-solid fa-ellipsis-vertical"></i>&nbsp;' +
+      level.title.toUpperCase();
+    title.classList.add('text-start', 'py-2');
     root.appendChild(title);
     // level items
     for (const item of level.items) {
@@ -157,12 +164,28 @@ export class Simulator {
           Math.random() * this.exercise.instances.length,
         );
         const element = document.createElement('div');
+        element.classList.add('col', 'mb-3', 'p-0');
+        element.style.backgroundColor = '#353535';
+        element.style.color = 'white';
+        element.style.borderRadius = '8px';
+        /*element.style.paddingLeft = '8px';
+        element.style.paddingRight = '8px';
+        element.style.marginBottom = '25px';*/
+        const content = document.createElement('div');
+        content.classList.add('px-2');
+        element.appendChild(content);
+        /*const type = document.createElement('div');
+        element.appendChild(type);
+        type.classList.add('fw-light');
+        type.style.color = '#a0a0a0';
+        type.innerHTML = '<i class="fa-solid fa-pencil"></i>';*/
         const title = document.createElement('h4');
-        element.appendChild(title);
-        title.classList.add('text-center');
-        title.innerHTML = this.exercise.title;
-        element.classList.add('my-1', 'p-1');
-        element.appendChild(this.generateTextItem(this.exercise.text));
+        content.appendChild(title);
+        title.classList.add('text-start', 'pt-2');
+        title.innerHTML =
+          '<span style="font-size:14pt">&nbsp;<i class="fa-solid fa-pencil"></i></span>&nbsp;' +
+          this.exercise.title;
+        content.appendChild(this.generateTextItem(this.exercise.text));
         return element;
       }
       case 'table': {
@@ -213,6 +236,9 @@ export class Simulator {
       case 'paragraph': {
         const paragraph = <MBL_Text_Paragraph>item;
         const p = document.createElement('p');
+        //p.style.backgroundColor = '#ff0000';
+        p.classList.add('py-0');
+        p.style.fontSize = '12pt';
         for (const paragraphItem of paragraph.items)
           p.appendChild(this.generateTextItem(paragraphItem));
         return p;
@@ -379,8 +405,15 @@ export class Simulator {
       }
       case 'text_input': {
         // TODO: depends on type, ...
-        const element = document.createElement('input');
-        element.classList.add('m-1');
+        //const element = document.createElement('input');
+        //element.classList.add('m-1');
+
+        const element = document.createElement('span');
+        element.style.fontSize = '18pt';
+        element.style.color = inputColor;
+        element.style.verticalAlign = 'center';
+        element.innerHTML =
+          '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard"></i></b>&nbsp;&nbsp;';
         return element;
       }
       case 'multiple_choice': {
@@ -395,11 +428,16 @@ export class Simulator {
           let td = document.createElement('td');
           td.classList.add('p-1');
           tr.appendChild(td);
-          const input = document.createElement('input');
+          /*const input = document.createElement('input');
           input.classList.add('form-check-input');
           input.type = 'checkbox';
           input.value = '';
-          td.appendChild(input);
+          td.appendChild(input);*/
+
+          td.innerHTML = '<b><i class="fa-regular fa-circle-check"></i></b>';
+          td.style.fontSize = '16pt';
+          td.style.color = inputColor;
+
           // text
           td = document.createElement('td');
           td.classList.add('p-1');
@@ -437,183 +475,4 @@ export class Simulator {
     console.log('SIM:ERROR:' + message);
     this.log += 'SIM:ERROR:' + message + '\n';
   }
-
-  /*private genDoc(doc: Doc): HTMLElement {
-    const dom = document.createElement('div');
-    const title = document.createElement('h4');
-    title.innerHTML = doc.title.toUpperCase();
-    title.classList.add('text-center', 'py-2');
-    dom.appendChild(title);
-    for (const item of doc.items) {
-      switch (item.type) {
-        case 'paragraph':
-          {
-            const p = this.genParagraph(item);
-            if (p != null) dom.appendChild(p);
-          }
-          break;
-        case 'exercise':
-          {
-            const e = this.genExercise(item);
-            dom.appendChild(e);
-            const br = document.createElement('br');
-            dom.appendChild(br);
-          }
-          break;
-        case 'equation':
-          {
-            // TODO: check if error is set
-            // TODO: equation numbering
-            const p = document.createElement('p');
-            p.classList.add('text-center');
-            p.innerHTML = this.mathjaxInst.tex2svgBlock(item.value);
-            dom.appendChild(p);
-          }
-          break;
-        default:
-          console.log('ERROR: UNIMPLEMENTED genDoc(..) type ' + item.type);
-      }
-    }
-    return dom;
-  }
-
-  private genParagraph(item: DocItem): HTMLElement {
-    switch (item.type) {
-      case 'paragraph': {
-        const p = document.createElement('p');
-        for (const child of item.items) {
-          const c = this.genParagraph(child);
-          if (c != null) p.appendChild(c);
-        }
-        return p;
-      }
-      case 'span': {
-        const s = document.createElement('span');
-        for (const child of item.items) {
-          const c = this.genParagraph(child);
-          if (c != null) s.appendChild(c);
-        }
-        return s;
-      }
-      case 'text': {
-        const span = document.createElement('span');
-        span.innerHTML = item.value;
-        return span;
-      }
-      case 'itemize': {
-        const ul = document.createElement('ul');
-        for (const child of item.items) {
-          const c = this.genParagraph(child);
-          if (c != null) {
-            const li = document.createElement('li');
-            li.appendChild(c);
-            ul.appendChild(li);
-          }
-        }
-        return ul;
-      }
-      case 'inline-math': {
-        const span = document.createElement('span');
-        let tex = '';
-        for (const child of item.items) {
-          switch (child.type) {
-            case 'variable':
-              // TODO: randomly choose instance!
-              tex += this.exercise.instances[0][child.value];
-              break;
-            case 'matrix-variable':
-              // TODO: randomly choose instance!
-              tex += matrix2tex(this.exercise.instances[0][child.value]);
-              break;
-            case 'text':
-              tex += child.value;
-              break;
-          }
-        }
-        const html = this.mathjaxInst.tex2svgInline(tex);
-        span.innerHTML = ' ' + html + ' ';
-        return span;
-      }
-      case 'integer-input': {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.size = 5; // TODO
-        input.style.display = 'inline';
-        //input.classList.add('form-control');
-        return input;
-      }
-      case 'bold':
-      case 'italic':
-      case 'color': {
-        const span = document.createElement('span');
-        let color = '';
-        switch (item.type) {
-          case 'bold':
-            span.style.fontWeight = 'bold';
-            break;
-          case 'italic':
-            span.style.fontStyle = 'italic';
-            break;
-          case 'color':
-            switch (item.value) {
-              case '1':
-                color = '#c56663';
-                break;
-              case '2':
-                color = 'green';
-                break;
-              case '3':
-                color = 'blue';
-                break;
-            }
-            span.style.color = color;
-            break;
-        }
-        let space = document.createElement('span');
-        space.innerHTML = ' ';
-        span.appendChild(space);
-        for (const child of item.items) {
-          const c = this.genParagraph(child);
-          if (c != null) span.appendChild(c);
-        }
-        space = document.createElement('span');
-        space.innerHTML = ' ';
-        span.appendChild(space);
-        return span;
-      }
-      case 'linefeed': {
-        const span = document.createElement('span');
-        span.innerHTML = '<br/>';
-        return span;
-      }
-      case 'error': {
-        const span = document.createElement('span');
-        span.classList.add('text-danger');
-        span.innerHTML = item.value;
-        return span;
-      }
-      default:
-        console.log('ERROR: UNIMPLEMENTED genParagraph(..) type ' + item.type);
-    }
-    return null;
-  }
-
-  private genExercise(item: DocItem): HTMLElement {
-    this.exercise = item;
-    console.log('generating exercise "' + item.title + '"');
-    // container
-    const div = document.createElement('div');
-    //div.classList.add('border', 'border-dark', 'rounded');
-    // title
-    const h2 = document.createElement('h4');
-    h2.innerHTML =
-      '<i class="fa-solid fa-circle-question"></i>' + '&nbsp;' + item.title;
-    div.appendChild(h2);
-    // text
-    //console.log('>>>>>');
-    //console.log(item.text);
-
-    div.appendChild(this.genParagraph(item.text));
-    return div;
-  }*/
 }
