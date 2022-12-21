@@ -36,11 +36,14 @@ import {
   MBL_Text_Span,
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
+import { htmlSafeString } from './html';
 
 import { MathJax } from './mathjax';
 import { matrix2tex, set2tex, term2tex } from './tex';
 
 export class Simulator {
+  private log = '';
+
   private course: MBL_Course = null;
 
   private exercise: MBL_Exercise = null;
@@ -50,30 +53,27 @@ export class Simulator {
 
   private parentDOM: HTMLElement = null;
 
-  constructor(course: MBL_Course, parent: HTMLElement) {
-    this.course = course;
+  constructor(parent: HTMLElement) {
     this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
   }
 
+  public setCourse(course: MBL_Course): void {
+    this.course = course;
+  }
+
+  public getLog(): string {
+    return htmlSafeString(this.log);
+  }
+
   public getHTML(): string {
-    let html = this.parentDOM.innerHTML;
-    html = html.replace(/</g, '&lt;');
-    html = html.replace(/>/g, '&gt;');
-    html = html.replace(/"/g, '&quot;');
-    html = html.replace(/'/g, '&#039;');
-    return html;
+    const html = this.parentDOM.innerHTML;
+    return htmlSafeString(html);
   }
 
   public getJSON(): string {
-    let json = JSON.stringify(this.course.toJSON(), null, 2);
-    json = json.replace(/</g, '&lt;');
-    json = json.replace(/>/g, '&gt;');
-    json = json.replace(/\n/g, '<br/>');
-    json = json.replace(/ /g, '&nbsp;');
-    json = json.replace(/"/g, '&quot;');
-    json = json.replace(/'/g, '&#039;');
-    return json;
+    const json = JSON.stringify(this.course.toJSON(), null, 2);
+    return htmlSafeString(json);
   }
 
   public generateDOM(): boolean {
@@ -86,13 +86,12 @@ export class Simulator {
         //this.parentDOM.appendChild(h4);
         break;
       default:
-        console.log(
-          'ERROR: Simulator.generateDOM(..): unimplemented ' +
-            this.course.debug,
+        this.error(
+          'Simulator.generateDOM(..): unimplemented ' + this.course.debug,
         );
         break;
     }
-
+    this.info('... ready');
     return true;
   }
 
@@ -204,9 +203,7 @@ export class Simulator {
         return this.generateTextItem(item);
       }
       default:
-        console.log(
-          'warning:generateLevelItem(..): unimplemented type: ' + item.type,
-        );
+        this.warning('generateLevelItem(..): unimplemented type: ' + item.type);
     }
     return document.createElement('span');
   }
@@ -292,9 +289,8 @@ export class Simulator {
             element.style.color = 'rgb(0,255,0)';
             break;
           default:
-            console.log(
-              'warning:generateTextItem(..): unimplemented color key: ' +
-                color.key,
+            this.warning(
+              'generateTextItem(..): unimplemented color key: ' + color.key,
             );
         }
         for (const subItem of color.items)
@@ -362,8 +358,8 @@ export class Simulator {
                   tex += term2tex(value);
                   break;
                 default:
-                  console.log(
-                    'warning:generateTextItem(..):inline_math:variable: ' +
+                  this.warning(
+                    'generateTextItem(..):inline_math:variable: ' +
                       'unimplemented type: ' +
                       v.type,
                   );
@@ -371,8 +367,8 @@ export class Simulator {
               break;
             }
             default:
-              console.log(
-                'warning:generateTextItem(..):inline_math: unimplemented type: ' +
+              this.warning(
+                'generateTextItem(..):inline_math: unimplemented type: ' +
                   subItem.type,
               );
           }
@@ -422,11 +418,24 @@ export class Simulator {
         return element;
       }
       default:
-        console.log(
-          'warning:generateTextItem(..): unimplemented type: ' + item.type,
-        );
+        this.warning('generateTextItem(..): unimplemented type: ' + item.type);
     }
     return document.createElement('span');
+  }
+
+  info(message: string): void {
+    console.log('SIM:INFO:' + message);
+    this.log += 'SIM:INFO:' + message + '\n';
+  }
+
+  warning(message: string): void {
+    console.log('SIM:WARNING:' + message);
+    this.log += 'SIM:WARNING:' + message + '\n';
+  }
+
+  error(message: string): void {
+    console.log('SIM:ERROR:' + message);
+    this.log += 'SIM:ERROR:' + message + '\n';
   }
 
   /*private genDoc(doc: Doc): HTMLElement {
