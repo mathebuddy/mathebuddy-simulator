@@ -42,7 +42,7 @@
             title="go to mathe:buddy website"
           >
             <img src="img/logo.svg" style="height: 36px" />
-            &nbsp; SIMULATOR
+            <!--&nbsp; <span class="fw-light">SIMULATOR</span>-->
           </div>
 
           &nbsp;&nbsp;
@@ -89,6 +89,23 @@
           <div class="p-3 border border-dark shadow-lg" style="display: inline">
             <span class="text-dark"><i class="fa-solid fa-eye"></i></span>
             &nbsp;
+            <div
+              class="form-check form-check-inline"
+              data-bs-toggle="tooltip"
+              data-bs-placement="bottom"
+              title="show log"
+            >
+              <input
+                class="form-check-input"
+                type="radio"
+                name="inlineRadioOptions"
+                id="radio-LOG"
+                value="option1"
+                onclick="logLog();"
+                checked
+              />
+              <label class="form-check-label" for="radio-JSON">LOG</label>
+            </div>
             <div
               class="form-check form-check-inline"
               data-bs-toggle="tooltip"
@@ -199,7 +216,7 @@
     </div>
 
     <script>
-      document.getElementById('radio-MBL').checked = true;
+      document.getElementById('radio-LOG').checked = true;
 
       var deviceContent = document.getElementById('device-content');
       var logContent = document.getElementById('log-content');
@@ -208,6 +225,10 @@
 
       var files = [];
       var selectedFileIndex = -1;
+
+      function logLog(log) {
+        logContent.innerHTML = '<div class="text-white">' + log + '</div>';
+      }
 
       function logMbl() {
         let i = mblCode.replace(/</g, '&lt;');
@@ -325,12 +346,18 @@
         axios.post('load_files', { path: path }).then(function (response) {
           const files = response.data;
           const course = mathebuddySIM.compile(path, files);
-          sim = mathebuddySIM.createSim(course, deviceContent);
-          if (mathebuddySIM.generateDOM(sim) == false) {
-            console.log('ERROR: failed to generate DOM');
+          if (course == null) {
+            const compilerLog = mathebuddySIM.getCompilerLog();
+            logLog(compilerLog);
+          } else {
+            sim = mathebuddySIM.createSim(deviceContent);
+            sim.setCourse(course);
+            if (mathebuddySIM.generateDOM(sim) == false) {
+              console.log('ERROR: failed to generate DOM');
+            }
+            logLog(mathebuddySIM.getLOG(sim));
           }
           mblCode = files[path];
-          logMbl();
         });
       }
 
