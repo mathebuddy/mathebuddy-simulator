@@ -44,15 +44,26 @@ import { matrix2tex, set2tex, term2tex } from './tex';
 const yellow = '#ceab39';
 const red = '#c56663';
 const green = '#b1c752';
-const inputColor = yellow;
+
+const inputColorRed = red;
+const inputColorYellow = yellow;
+const inputColorGreen = green;
+
+class ExerciseData {
+  expectedValues: { [inputId: string]: string } = {};
+  expectedTypes: { [inputId: string]: string } = {};
+  studentValues: { [inputId: string]: string } = {};
+}
 
 export class Simulator {
   private log = '';
 
   private course: MBL_Course = null;
+  private exerciseData: { [exerciseId: string]: ExerciseData } = {};
 
-  private exercise: MBL_Exercise = null;
-  private exerciseInstanceIndex = 0;
+  private currentExercise: MBL_Exercise = null;
+  private currentExerciseInstanceIndex = 0;
+  private currentExerciseData: ExerciseData = null;
 
   private mathjaxInst: MathJax = null;
 
@@ -159,10 +170,14 @@ export class Simulator {
         return element;
       }
       case 'exercise': {
-        this.exercise = <MBL_Exercise>item;
-        this.exerciseInstanceIndex = Math.floor(
-          Math.random() * this.exercise.instances.length,
+        this.currentExercise = <MBL_Exercise>item;
+        this.currentExerciseInstanceIndex = Math.floor(
+          Math.random() * this.currentExercise.instances.length,
         );
+
+        this.exerciseData[this.currentExercise.label] =
+          this.currentExerciseData = new ExerciseData();
+
         const element = document.createElement('div');
         element.classList.add('col', 'mb-3', 'p-0');
         element.style.backgroundColor = '#353535';
@@ -184,8 +199,8 @@ export class Simulator {
         title.classList.add('text-start', 'pt-2');
         title.innerHTML =
           '<span style="font-size:14pt">&nbsp;<i class="fa-solid fa-pencil"></i></span>&nbsp;' +
-          this.exercise.title;
-        content.appendChild(this.generateTextItem(this.exercise.text));
+          this.currentExercise.title;
+        content.appendChild(this.generateTextItem(this.currentExercise.text));
         return element;
       }
       case 'table': {
@@ -361,11 +376,11 @@ export class Simulator {
             }
             case 'variable': {
               const variable = <MBL_Exercise_Text_Variable>subItem;
-              const v = this.exercise.variables[variable.variableId];
+              const v = this.currentExercise.variables[variable.variableId];
               const value =
-                this.exercise.instances[this.exerciseInstanceIndex].values[
-                  variable.variableId
-                ];
+                this.currentExercise.instances[
+                  this.currentExerciseInstanceIndex
+                ].values[variable.variableId];
               switch (v.type) {
                 case MBL_Exercise_VariableType.Bool:
                 case MBL_Exercise_VariableType.Int:
@@ -410,7 +425,7 @@ export class Simulator {
 
         const element = document.createElement('span');
         element.style.fontSize = '18pt';
-        element.style.color = inputColor;
+        element.style.color = inputColorYellow;
         element.style.verticalAlign = 'center';
         element.innerHTML =
           '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard" style="cursor:crosshair;"></i></b>&nbsp;&nbsp;';
@@ -420,32 +435,60 @@ export class Simulator {
         const mc = <MBL_Exercise_Text_Multiple_Choice>item;
         const element = document.createElement('table');
         // todo: randomize order
+        const data = this.currentExerciseData;
         for (const option of mc.items) {
+          data.expectedValues[option.input_id] =
+            this.currentExercise.instances[
+              this.currentExerciseInstanceIndex
+            ].values[option.variable];
+          data.expectedTypes[option.input_id] =
+            this.currentExercise.variables[option.variable].type;
+          data.studentValues[option.input_id] = 'unset';
+
           const tr = document.createElement('tr');
           tr.classList.add('p-1');
           element.appendChild(tr);
           // check box
-          let td = document.createElement('td');
-          td.classList.add('p-1');
-          tr.appendChild(td);
+          const tdCheck = document.createElement('td');
+          tdCheck.classList.add('p-1');
+          tr.appendChild(tdCheck);
 
-          /*const input = document.createElement('input');
-          input.classList.add('form-check-input');
-          input.type = 'checkbox';
-          input.value = '';
-          td.appendChild(input);*/
+          tdCheck.innerHTML = '<i class="fa-regular fa-circle" ></i>';
+          tdCheck.style.cursor = 'crosshair';
+          tdCheck.style.fontSize = '18pt';
+          tdCheck.style.color = inputColorYellow;
 
-          td.innerHTML =
-            '<b><i class="fa-regular fa-circle-check" style="cursor:crosshair;"></i></b>';
-          td.style.fontSize = '16pt';
-          td.style.color = inputColor;
+          const _inputId = option.input_id;
+          const _data = data;
+          tr.addEventListener('click', () => {
+            switch (_data.studentValues[_inputId]) {
+              case 'unset':
+              case 'false': {
+                tdCheck.innerHTML =
+                  '<i class="fa-regular fa-circle-check" ></i>';
+                tdCheck.style.color = inputColorGreen;
+                _data.studentValues[_inputId] = 'true';
+                break;
+              }
+              case 'true': {
+                tdCheck.innerHTML =
+                  '<i class="fa-regular fa-circle-xmark" ></i>';
+                tdCheck.style.color = inputColorRed;
+                _data.studentValues[_inputId] = 'false';
+                break;
+              }
+            }
+          });
 
           // text
-          td = document.createElement('td');
-          td.classList.add('p-1');
-          tr.appendChild(td);
-          td.appendChild(this.generateTextItem(option.text));
+          const tdText = document.createElement('td');
+          tdText.classList.add('p-1');
+          tr.appendChild(tdText);
+          tdText.appendChild(this.generateTextItem(option.text));
         }
+
+        console.log(data);
+
         return element;
       }
       case 'error': {
