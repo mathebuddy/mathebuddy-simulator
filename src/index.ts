@@ -56,8 +56,8 @@ export function getLOG(sim: Simulator): string {
   return sim.getLog();
 }
 
-export function getJSON(sim: Simulator): string {
-  return sim.getJSON();
+export function getMBCL(sim: Simulator): string {
+  return sim.getMBCL();
 }
 
 export function getHTML(sim: Simulator): string {
