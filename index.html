@@ -104,7 +104,7 @@
                 onclick="logLog();"
                 checked
               />
-              <label class="form-check-label" for="radio-JSON">LOG</label>
+              <label class="form-check-label" for="radio-LOG">LOG</label>
             </div>
             <div
               class="form-check form-check-inline"
@@ -121,23 +121,23 @@
                 onclick="logMbl();"
                 checked
               />
-              <label class="form-check-label" for="radio-JSON">MBL</label>
+              <label class="form-check-label" for="radio-MBL">MBL</label>
             </div>
             <div
               class="form-check form-check-inline"
               data-bs-toggle="tooltip"
               data-bs-placement="bottom"
-              title="show JSON output"
+              title="show MBCL output"
             >
               <input
                 class="form-check-input"
                 type="radio"
                 name="inlineRadioOptions"
-                id="radio-JSON"
+                id="radio-MBCL"
                 value="option2"
-                onclick="logJson();"
+                onclick="logMbcl();"
               />
-              <label class="form-check-label" for="radio-JSON">JSON</label>
+              <label class="form-check-label" for="radio-MBCL">MBCL</label>
             </div>
             <div
               class="form-check form-check-inline"
@@ -243,10 +243,10 @@
         logContent.innerHTML = '<div class="text-white">' + i + '</div>';
       }
 
-      function logJson() {
+      function logMbcl() {
         if (sim == null) return;
         logContent.innerHTML =
-          '<div class="text-white">' + mathebuddySIM.getJSON(sim) + '</div>';
+          '<div class="text-white">' + mathebuddySIM.getMBCL(sim) + '</div>';
       }
 
       function logHtml() {
