@@ -15,6 +15,7 @@ import { MBL_Equation } from '@mathebuddy/mathebuddy-compiler/src/dataEquation';
 import { MBL_Error } from '@mathebuddy/mathebuddy-compiler/src/dataError';
 import {
   MBL_Exercise,
+  MBL_Exercise_Text_Input,
   MBL_Exercise_Text_Multiple_Choice,
   MBL_Exercise_Text_Variable,
   MBL_Exercise_VariableType,
@@ -49,6 +50,12 @@ const inputColorRed = red;
 const inputColorYellow = yellow;
 const inputColorGreen = green;
 
+enum CheckState {
+  AllCorrect = 'all-correct',
+  Mistakes = 'mistakes',
+  Incomplete = 'incomplete',
+}
+
 class ExerciseData {
   private sim: Simulator;
 
@@ -60,25 +67,26 @@ class ExerciseData {
     this.sim = sim;
   }
 
-  check(): boolean {
+  check(): CheckState {
     for (const inputId in this.expectedTypes) {
       const expectedType = this.expectedTypes[inputId];
       const expectedValue = this.expectedValues[inputId];
       const studentValue = this.studentValues[inputId];
       switch (expectedType) {
         case 'bool':
-          if (expectedValue !== studentValue) return false;
+          if (studentValue === 'unset') return CheckState.Incomplete;
+          if (expectedValue !== studentValue) return CheckState.Mistakes;
           break;
         default: {
           const msg =
             'Error: ExerciseData.check(): unimplemented type' + expectedType;
           this.sim.appendToLog(msg);
           console.log(msg);
-          return false;
+          return CheckState.Mistakes;
         }
       }
     }
-    return true;
+    return CheckState.AllCorrect;
   }
 }
 
@@ -91,6 +99,7 @@ export class Simulator {
   private currentExercise: MBL_Exercise = null;
   private currentExerciseInstanceIndex = 0;
   private currentExerciseData: ExerciseData = null;
+  private currentExerciseHTMLElement: HTMLDivElement = null;
 
   private mathjaxInst: MathJax = null;
 
@@ -206,10 +215,12 @@ export class Simulator {
           Math.random() * this.currentExercise.instances.length,
         );
 
-        this.exerciseData[this.currentExercise.label] =
-          this.currentExerciseData = new ExerciseData(this);
+        const data = new ExerciseData(this);
+        this.exerciseData[this.currentExercise.label] = data;
+        this.currentExerciseData = data;
 
         const element = document.createElement('div');
+        this.currentExerciseHTMLElement = element;
         element.classList.add('col', 'mb-3', 'p-0');
         element.style.backgroundColor = '#353535';
         element.style.color = 'white';
@@ -241,17 +252,25 @@ export class Simulator {
           const _element = element;
           const _checkButton = checkButton;
           checkButton.addEventListener('click', () => {
-            if (_data.check()) {
-              _element.style.borderColor = green;
-              _checkButton.style.backgroundColor = green;
-              _checkButton.innerHTML = '<i class="fa-solid fa-check"></i>';
-            } else {
-              _element.style.borderColor = red;
-              _checkButton.style.backgroundColor = red;
-              _checkButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            switch (_data.check()) {
+              case CheckState.AllCorrect:
+                _element.style.borderColor = green;
+                _checkButton.style.backgroundColor = green;
+                _checkButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+                break;
+              case CheckState.Mistakes:
+                _element.style.borderColor = red;
+                _checkButton.style.backgroundColor = red;
+                _checkButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                break;
+              case CheckState.Incomplete:
+                _checkButton.innerHTML = '<i class="fa-solid fa-hammer"></i>';
+                break;
             }
           });
         }
+
+        console.log(data);
 
         return element;
       }
@@ -471,9 +490,27 @@ export class Simulator {
         return element;
       }
       case 'text_input': {
+        const input = <MBL_Exercise_Text_Input>item;
         // TODO: depends on type, ...
         //const element = document.createElement('input');
         //element.classList.add('m-1');
+
+        const data = this.currentExerciseData;
+        if (this.currentExercise.instances.length > 0) {
+          data.expectedValues[input.input_id] =
+            this.currentExercise.instances[
+              this.currentExerciseInstanceIndex
+            ].values[input.variable];
+          data.expectedTypes[input.input_id] =
+            this.currentExercise.variables[input.variable].type;
+          data.studentValues[input.input_id] = '';
+        } else {
+          console.log(
+            'ERROR: exercise ' +
+              this.currentExercise.title +
+              ': cannot create data for text_input!',
+          );
+        }
 
         const element = document.createElement('span');
         element.style.fontSize = '18pt';
@@ -481,6 +518,15 @@ export class Simulator {
         element.style.verticalAlign = 'center';
         element.innerHTML =
           '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard" style="cursor:crosshair;"></i></b>&nbsp;&nbsp;';
+        {
+          const _element = this.currentExerciseHTMLElement;
+          element.addEventListener('click', () => {
+            // TODO: scroll with offset: https://stackoverflow.com/questions/49820013/javascript-scrollintoview-smooth-scroll-and-offset
+            _element.scrollIntoView();
+            const keyboardDiv = document.getElementById('keyboard');
+            keyboardDiv.style.display = 'block';
+          });
+        }
         return element;
       }
       case 'multiple_choice': {
@@ -540,8 +586,6 @@ export class Simulator {
           tr.appendChild(tdText);
           tdText.appendChild(this.generateTextItem(option.text));
         }
-
-        console.log(data);
 
         return element;
       }
