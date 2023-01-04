@@ -50,9 +50,36 @@ const inputColorYellow = yellow;
 const inputColorGreen = green;
 
 class ExerciseData {
+  private sim: Simulator;
+
   expectedValues: { [inputId: string]: string } = {};
   expectedTypes: { [inputId: string]: string } = {};
   studentValues: { [inputId: string]: string } = {};
+
+  constructor(sim: Simulator) {
+    this.sim = sim;
+  }
+
+  check(): boolean {
+    for (const inputId in this.expectedTypes) {
+      const expectedType = this.expectedTypes[inputId];
+      const expectedValue = this.expectedValues[inputId];
+      const studentValue = this.studentValues[inputId];
+      switch (expectedType) {
+        case 'bool':
+          if (expectedValue !== studentValue) return false;
+          break;
+        default: {
+          const msg =
+            'Error: ExerciseData.check(): unimplemented type' + expectedType;
+          this.sim.appendToLog(msg);
+          console.log(msg);
+          return false;
+        }
+      }
+    }
+    return true;
+  }
 }
 
 export class Simulator {
@@ -76,6 +103,10 @@ export class Simulator {
 
   public setCourse(course: MBL_Course): void {
     this.course = course;
+  }
+
+  public appendToLog(msg: string): void {
+    this.log += msg;
   }
 
   public getLog(): string {
@@ -176,24 +207,20 @@ export class Simulator {
         );
 
         this.exerciseData[this.currentExercise.label] =
-          this.currentExerciseData = new ExerciseData();
+          this.currentExerciseData = new ExerciseData(this);
 
         const element = document.createElement('div');
         element.classList.add('col', 'mb-3', 'p-0');
         element.style.backgroundColor = '#353535';
         element.style.color = 'white';
+        element.style.borderStyle = 'solid';
         element.style.borderRadius = '8px';
-        /*element.style.paddingLeft = '8px';
-        element.style.paddingRight = '8px';
-        element.style.marginBottom = '25px';*/
+        element.style.borderColor = yellow;
+
         const content = document.createElement('div');
         content.classList.add('px-2');
         element.appendChild(content);
-        /*const type = document.createElement('div');
-        element.appendChild(type);
-        type.classList.add('fw-light');
-        type.style.color = '#a0a0a0';
-        type.innerHTML = '<i class="fa-solid fa-pencil"></i>';*/
+
         const title = document.createElement('h4');
         content.appendChild(title);
         title.classList.add('text-start', 'pt-2');
@@ -201,6 +228,31 @@ export class Simulator {
           '<span style="font-size:14pt">&nbsp;<i class="fa-solid fa-pencil"></i></span>&nbsp;' +
           this.currentExercise.title;
         content.appendChild(this.generateTextItem(this.currentExercise.text));
+
+        const checkButton = document.createElement('div');
+        element.appendChild(checkButton);
+        checkButton.classList.add('w-100', 'text-center');
+        checkButton.style.backgroundColor = yellow;
+        checkButton.style.cursor = 'pointer';
+        checkButton.style.fontSize = '16pt';
+        checkButton.innerHTML = '<i class="fa-solid fa-question"></i>';
+        {
+          const _data = this.currentExerciseData;
+          const _element = element;
+          const _checkButton = checkButton;
+          checkButton.addEventListener('click', () => {
+            if (_data.check()) {
+              _element.style.borderColor = green;
+              _checkButton.style.backgroundColor = green;
+              _checkButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+            } else {
+              _element.style.borderColor = red;
+              _checkButton.style.backgroundColor = red;
+              _checkButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+            }
+          });
+        }
+
         return element;
       }
       case 'table': {
@@ -458,27 +510,29 @@ export class Simulator {
           tdCheck.style.fontSize = '18pt';
           tdCheck.style.color = inputColorYellow;
 
-          const _inputId = option.input_id;
-          const _data = data;
-          tr.addEventListener('click', () => {
-            switch (_data.studentValues[_inputId]) {
-              case 'unset':
-              case 'false': {
-                tdCheck.innerHTML =
-                  '<i class="fa-regular fa-circle-check" ></i>';
-                tdCheck.style.color = inputColorGreen;
-                _data.studentValues[_inputId] = 'true';
-                break;
+          {
+            const _inputId = option.input_id;
+            const _data = data;
+            tr.addEventListener('click', () => {
+              switch (_data.studentValues[_inputId]) {
+                case 'unset':
+                case 'false': {
+                  tdCheck.innerHTML =
+                    '<i class="fa-regular fa-circle-check" ></i>';
+                  tdCheck.style.color = inputColorGreen;
+                  _data.studentValues[_inputId] = 'true';
+                  break;
+                }
+                case 'true': {
+                  tdCheck.innerHTML =
+                    '<i class="fa-regular fa-circle-xmark" ></i>';
+                  tdCheck.style.color = inputColorRed;
+                  _data.studentValues[_inputId] = 'false';
+                  break;
+                }
               }
-              case 'true': {
-                tdCheck.innerHTML =
-                  '<i class="fa-regular fa-circle-xmark" ></i>';
-                tdCheck.style.color = inputColorRed;
-                _data.studentValues[_inputId] = 'false';
-                break;
-              }
-            }
-          });
+            });
+          }
 
           // text
           const tdText = document.createElement('td');
