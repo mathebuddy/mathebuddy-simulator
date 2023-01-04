@@ -76,7 +76,7 @@ export class Simulator {
     return htmlSafeString(html);
   }
 
-  public getJSON(): string {
+  public getMBCL(): string {
     const json = JSON.stringify(this.course.toJSON(), null, 2);
     return htmlSafeString(json);
   }
@@ -413,7 +413,7 @@ export class Simulator {
         element.style.color = inputColor;
         element.style.verticalAlign = 'center';
         element.innerHTML =
-          '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard"></i></b>&nbsp;&nbsp;';
+          '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard" style="cursor:crosshair;"></i></b>&nbsp;&nbsp;';
         return element;
       }
       case 'multiple_choice': {
@@ -428,13 +428,15 @@ export class Simulator {
           let td = document.createElement('td');
           td.classList.add('p-1');
           tr.appendChild(td);
+
           /*const input = document.createElement('input');
           input.classList.add('form-check-input');
           input.type = 'checkbox';
           input.value = '';
           td.appendChild(input);*/
 
-          td.innerHTML = '<b><i class="fa-regular fa-circle-check"></i></b>';
+          td.innerHTML =
+            '<b><i class="fa-regular fa-circle-check" style="cursor:crosshair;"></i></b>';
           td.style.fontSize = '16pt';
           td.style.color = inputColor;
 
