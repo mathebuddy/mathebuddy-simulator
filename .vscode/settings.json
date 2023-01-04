@@ -34,7 +34,8 @@
     "Stiftung",
     "subsubsection",
     "testcourse",
-    "testdata"
+    "testdata",
+    "xmark"
   ],
   "[python]": {
     "editor.defaultFormatter": "ms-python.python"
