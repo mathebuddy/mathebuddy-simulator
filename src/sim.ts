@@ -37,7 +37,9 @@ import {
   MBL_Text_Span,
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
+import { createIntegerKeyboardLayout as createKeyboardLayout_Integer } from './config';
 import { htmlSafeString } from './html';
+import { Keyboard, KeyboardLayout } from './keyboard';
 
 import { MathJax } from './mathjax';
 import { matrix2tex, set2tex, term2tex } from './tex';
@@ -105,9 +107,15 @@ export class Simulator {
 
   private parentDOM: HTMLElement = null;
 
-  constructor(parent: HTMLElement) {
+  private keyboard: Keyboard = null;
+  private keyboardLayout_Integer: KeyboardLayout = null;
+
+  constructor(parent: HTMLElement, keyboardElement: HTMLElement) {
     this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
+
+    this.keyboard = new Keyboard(keyboardElement);
+    this.keyboardLayout_Integer = createKeyboardLayout_Integer();
   }
 
   public setCourse(course: MBL_Course): void {
@@ -523,8 +531,8 @@ export class Simulator {
           element.addEventListener('click', () => {
             // TODO: scroll with offset: https://stackoverflow.com/questions/49820013/javascript-scrollintoview-smooth-scroll-and-offset
             _element.scrollIntoView();
-            const keyboardDiv = document.getElementById('keyboard');
-            keyboardDiv.style.display = 'block';
+            // TODO: select keyboard type
+            this.keyboard.show(this.keyboardLayout_Integer);
           });
         }
         return element;
