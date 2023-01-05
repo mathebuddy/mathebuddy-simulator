@@ -26,14 +26,12 @@ export function createIntegerKeyboardLayout(operators = false): KeyboardLayout {
   layout.addKey(1, 2, 1, 1, '6');
   layout.addKey(2, 2, 1, 1, '3');
   layout.addKey(3, 0, 1, 3, '0');
-
   if (operators) {
     layout.addKey(0, 3, 1, 1, '+');
     layout.addKey(1, 3, 1, 1, '-');
     layout.addKey(2, 3, 1, 1, '*');
     layout.addKey(3, 3, 1, 1, '/');
   }
-
   layout.addKey(0, operators ? 4 : 3, 2, 1, '!BACKSPACE!');
   layout.addKey(2, operators ? 4 : 3, 2, 1, '!ENTER!');
   return layout;
