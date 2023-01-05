@@ -224,9 +224,7 @@
               position: absolute;
               display: none;
             "
-          >
-            <!--<button class="btn btn-primary">blub</button>-->
-          </div>
+          ></div>
         </div>
 
         <!-- log area -->
@@ -258,6 +256,7 @@
 
       var deviceContent = document.getElementById('device-content');
       var logContent = document.getElementById('log-content');
+      var keyboard = document.getElementById('keyboard');
       var mblCode = ''; // MBL data
       var sim = null;
 
@@ -388,7 +387,7 @@
             const compilerLog = mathebuddySIM.getCompilerLog();
             logLog(compilerLog);
           } else {
-            sim = mathebuddySIM.createSim(deviceContent);
+            sim = mathebuddySIM.createSim(deviceContent, keyboard);
             sim.setCourse(course);
             if (mathebuddySIM.generateDOM(sim) == false) {
               console.log('ERROR: failed to generate DOM');
