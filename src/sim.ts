@@ -37,6 +37,7 @@ import {
   MBL_Text_Span,
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
+import { stringify } from 'querystring';
 import { createIntegerKeyboardLayout as createKeyboardLayout_Integer } from './config';
 import { htmlSafeString } from './html';
 import { Keyboard, KeyboardLayout } from './keyboard';
@@ -71,17 +72,20 @@ class ExerciseData {
 
   check(): CheckState {
     for (const inputId in this.expectedTypes) {
-      const expectedType = this.expectedTypes[inputId];
-      const expectedValue = this.expectedValues[inputId];
-      const studentValue = this.studentValues[inputId];
+      const expectedType = this.expectedTypes[inputId].trim();
+      const expectedValue = this.expectedValues[inputId].trim();
+      const studentValue = this.studentValues[inputId].trim();
       switch (expectedType) {
         case 'bool':
           if (studentValue === 'unset') return CheckState.Incomplete;
           if (expectedValue !== studentValue) return CheckState.Mistakes;
           break;
+        case 'int':
+          if (expectedValue !== studentValue) return CheckState.Mistakes;
+          break;
         default: {
           const msg =
-            'Error: ExerciseData.check(): unimplemented type' + expectedType;
+            'Error: ExerciseData.check(): unimplemented type: ' + expectedType;
           this.sim.appendToLog(msg);
           console.log(msg);
           return CheckState.Mistakes;
@@ -278,6 +282,7 @@ export class Simulator {
           });
         }
 
+        // TODO: remove following line
         console.log(data);
 
         return element;
@@ -524,15 +529,22 @@ export class Simulator {
         element.style.fontSize = '18pt';
         element.style.color = inputColorYellow;
         element.style.verticalAlign = 'center';
+        element.style.paddingLeft = '3px';
         element.innerHTML =
           '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard" style="cursor:crosshair;"></i></b>&nbsp;&nbsp;';
         {
-          const _element = this.currentExerciseHTMLElement;
+          const _exerciseElement = this.currentExerciseHTMLElement;
+          const _data = data;
           element.addEventListener('click', () => {
             // TODO: scroll with offset: https://stackoverflow.com/questions/49820013/javascript-scrollintoview-smooth-scroll-and-offset
-            _element.scrollIntoView();
-            // TODO: select keyboard type
-            this.keyboard.show(this.keyboardLayout_Integer);
+            _exerciseElement.scrollIntoView();
+            // TODO: select keyboard layout!
+            this.keyboard.setInputText('');
+            this.keyboard.setListener((text: string): void => {
+              _data.studentValues[input.input_id] = text;
+              element.innerHTML = text;
+            });
+            this.keyboard.show(this.keyboardLayout_Integer, false);
           });
         }
         return element;
