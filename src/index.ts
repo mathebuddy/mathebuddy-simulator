@@ -39,8 +39,8 @@ export function getCompilerLog(): string {
   return compilerLog;
 }
 
-export function createSim(root: HTMLElement): Simulator {
-  const sim = new Simulator(root);
+export function createSim(root: HTMLElement, keyboard: HTMLElement): Simulator {
+  const sim = new Simulator(root, keyboard);
   return sim;
 }
 
