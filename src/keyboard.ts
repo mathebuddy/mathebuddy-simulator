@@ -61,6 +61,8 @@ export class Keyboard {
   private inputText = '';
   private inputTextHTMLElement: HTMLSpanElement = null;
 
+  private listener: (text: string) => void;
+
   constructor(parent: HTMLElement) {
     this.parent = parent;
   }
@@ -69,8 +71,15 @@ export class Keyboard {
     this.parent.style.display = 'none';
   }
 
-  show(layout: KeyboardLayout, inputText = ''): void {
+  setInputText(inputText: string): void {
     this.inputText = inputText;
+  }
+
+  setListener(fct: (text: string) => void): void {
+    this.listener = fct;
+  }
+
+  show(layout: KeyboardLayout, showPreview: boolean): void {
     this.parent.innerHTML = '';
     // div row
     const row = document.createElement('div');
@@ -91,6 +100,11 @@ export class Keyboard {
     this.inputTextHTMLElement.style.paddingLeft = '3px';
     this.inputTextHTMLElement.style.paddingRight = '3px';
     col.appendChild(this.inputTextHTMLElement);
+    if (showPreview == false) {
+      const br = document.createElement('br');
+      col.appendChild(br);
+      this.inputTextHTMLElement.style.display = 'none';
+    }
     // table
     const table = document.createElement('table');
     table.style.margin = '0 auto';
@@ -138,6 +152,7 @@ export class Keyboard {
               default:
                 this.inputText += _value;
             }
+            this.listener(this.inputText);
             this.inputTextHTMLElement.innerHTML = this.inputText;
           });
         }
