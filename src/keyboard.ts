@@ -19,12 +19,28 @@ export class KeyboardLayout {
   rows = 4;
   cols = 4;
   keys: KeyboardKey[] = [];
+
   constructor(numRows: number, numCols: number) {
     this.rows = numRows;
     this.cols = numCols;
     const n = this.rows * this.cols;
     for (let k = 0; k < n; k++) this.keys.push(null);
   }
+
+  resize(numRowsNew: number, numColsNew: number): void {
+    const keysNew: KeyboardKey[] = [];
+    for (let k = 0; k < numRowsNew * numColsNew; k++) keysNew.push(null);
+    for (let i = 0; i < numRowsNew; i++) {
+      for (let j = 0; j < numColsNew; j++) {
+        if (i >= this.rows || j >= this.cols) continue;
+        keysNew[i * numColsNew + j] = this.keys[i * this.cols + j];
+      }
+    }
+    this.rows = numColsNew;
+    this.cols = numColsNew;
+    this.keys = keysNew;
+  }
+
   addKey(
     rowIndex: number,
     columnIndex: number,
@@ -49,6 +65,9 @@ export class KeyboardLayout {
       case '!ENTER!':
         key.text = '<i class="fa-solid fa-check-double"></i>';
         break;
+      case 'pi':
+        key.text = '&pi;';
+        break;
       default:
         key.text = value;
     }
@@ -60,6 +79,7 @@ export class Keyboard {
 
   private inputText = '';
   private inputTextHTMLElement: HTMLSpanElement = null;
+  private solutionHTMLElement: HTMLSpanElement = null;
 
   private listener: (text: string) => void;
 
@@ -73,6 +93,14 @@ export class Keyboard {
 
   setInputText(inputText: string): void {
     this.inputText = inputText;
+  }
+
+  setSolutionText(solution: string): void {
+    if (this.solutionHTMLElement == null) {
+      console.log('called Keyboard.setSolutionText(..) before show()');
+      return;
+    }
+    this.solutionHTMLElement.innerHTML = solution;
   }
 
   setListener(fct: (text: string) => void): void {
@@ -94,9 +122,10 @@ export class Keyboard {
     this.inputTextHTMLElement.innerHTML = this.inputText;
     this.inputTextHTMLElement.style.color = 'white';
     this.inputTextHTMLElement.style.fontSize = '18pt';
-    this.inputTextHTMLElement.style.borderStyle = 'solid';
-    this.inputTextHTMLElement.style.borderColor = 'white';
-    this.inputTextHTMLElement.style.borderWidth = '2px';
+    //this.inputTextHTMLElement.style.borderBottomStyle = 'solid';
+    //this.inputTextHTMLElement.style.borderColor = 'white';
+    //this.inputTextHTMLElement.style.borderWidth = '2px';
+    this.inputTextHTMLElement.style.marginTop = '8px';
     this.inputTextHTMLElement.style.paddingLeft = '3px';
     this.inputTextHTMLElement.style.paddingRight = '3px';
     col.appendChild(this.inputTextHTMLElement);
@@ -108,6 +137,7 @@ export class Keyboard {
     // table
     const table = document.createElement('table');
     table.style.margin = '0 auto';
+    table.style.padding = '0 0 0 0';
     const cells: HTMLTableCellElement[] = [];
     for (let i = 0; i < layout.rows; i++) {
       const tr = document.createElement('tr');
@@ -129,7 +159,7 @@ export class Keyboard {
         td.style.paddingRight = '7px';
         td.style.paddingBottom = '0px';
         //td.style.maxHeight = '14px';
-        td.style.fontSize = '20pt';
+        td.style.fontSize = '17pt';
         td.style.cursor = 'crosshair';
         if (key.rows > 1) td.rowSpan = key.rows;
         if (key.cols > 1) td.colSpan = key.cols;
@@ -159,6 +189,15 @@ export class Keyboard {
       }
     }
     col.appendChild(table);
+    // solution preview (for debugging purposes)
+    this.solutionHTMLElement = document.createElement('span');
+    this.solutionHTMLElement.innerHTML = '';
+    this.solutionHTMLElement.style.marginTop = '0pt';
+    this.solutionHTMLElement.style.paddingTop = '0pt';
+    this.solutionHTMLElement.style.fontSize = '11pt';
+    this.solutionHTMLElement.style.color = 'white';
+    col.appendChild(this.solutionHTMLElement);
+    // make keyboard visible
     this.parent.style.display = 'block';
   }
 }
