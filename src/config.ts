@@ -60,6 +60,22 @@ export function createRealNumberKeyboardLayout(
 }
 
 /*
+  7 8 9 { B
+  4 5 6 } B
+  1 2 3 , E
+  0 0 0 0 E
+ */
+export function createIntegerSetKeyboardLayout(): KeyboardLayout {
+  const layout = createIntegerKeyboardLayout(true);
+  layout.addKey(0, 3, 1, 1, '{');
+  layout.addKey(1, 3, 1, 1, '}');
+  layout.addKey(2, 3, 1, 1, ',');
+  layout.addKey(3, 0, 1, 4, '0');
+  layout.removeKey(3, 3);
+  return layout;
+}
+
+/*
   7 8 9 + sin( (   B
   4 5 6 - cos( )   B
   1 2 3 * tan( pi  E
