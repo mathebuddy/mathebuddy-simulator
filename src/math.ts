@@ -11,7 +11,7 @@ export class MathIntSet {
 
   //G intSet = "{" { INT } "}";
   parse(s: string): boolean {
-    s = s.trim();
+    s = s.trim().replace('/ /g', '');
     if (s.length < 2) return false;
     if (s[0] != '{' || s[s.length - 1] != '}') return false;
     s = s.substring(1, s.length - 1);
