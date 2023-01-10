@@ -34,5 +34,7 @@ export function term2tex(t: string): string {
   tex = tex.replace(/cos\(/g, '\\cos(');
   tex = tex.replace(/tan\(/g, '\\tan(');
   tex = tex.replace(/exp\(/g, '\\exp(');
+  tex = tex.replace(/\{/g, '\\{');
+  tex = tex.replace(/\}/g, '\\}');
   return tex;
 }
