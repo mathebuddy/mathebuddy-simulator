@@ -9,10 +9,10 @@
 import { KeyboardLayout } from './keyboard';
 
 /*
-  7 8 9 + B
-  4 5 6 - B
-  1 2 3 * E
-  0 0 0 / E
+  7 8 9 B      7 8 9 + B
+  4 5 6 B      4 5 6 - B
+  1 2 3 E      1 2 3 * E
+  0 0 - E      0 0 0 / E
  */
 export function createIntegerKeyboardLayout(operators = false): KeyboardLayout {
   const layout = new KeyboardLayout(4, operators ? 5 : 4);
@@ -29,13 +29,15 @@ export function createIntegerKeyboardLayout(operators = false): KeyboardLayout {
   layout.addKey(1, 2, 1, 1, '6');
   layout.addKey(2, 2, 1, 1, '3');
 
-  layout.addKey(3, 0, 1, 3, '0');
-
   if (operators) {
+    layout.addKey(3, 0, 1, 3, '0');
     layout.addKey(0, 3, 1, 1, '+');
     layout.addKey(1, 3, 1, 1, '-');
     layout.addKey(2, 3, 1, 1, '*');
     layout.addKey(3, 3, 1, 1, '/');
+  } else {
+    layout.addKey(3, 0, 1, 2, '0');
+    layout.addKey(3, 2, 1, 1, '-');
   }
 
   layout.addKey(0, operators ? 4 : 3, 2, 1, '!BACKSPACE!');
