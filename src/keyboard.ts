@@ -26,18 +26,18 @@ export class KeyboardLayout {
     for (let k = 0; k < n; k++) this.keys.push(null);
   }
   addKey(
-    i: number,
-    j: number,
-    numRows: number,
-    numCols: number,
+    rowIndex: number,
+    columnIndex: number,
+    rowSpan: number,
+    columnSpan: number,
     value: string,
   ): void {
     const key = new KeyboardKey();
-    this.keys[i * this.cols + j] = key;
-    key.i = i;
-    key.j = j;
-    key.rows = numRows;
-    key.cols = numCols;
+    this.keys[rowIndex * this.cols + columnIndex] = key;
+    key.i = rowIndex;
+    key.j = columnIndex;
+    key.rows = rowSpan;
+    key.cols = columnSpan;
     key.value = value;
     switch (value) {
       case '*':
