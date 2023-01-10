@@ -96,11 +96,20 @@ class ExerciseData {
           }
           break;
         case 'int':
-          if (expectedValue !== studentValue) return CheckState.Mistakes;
+          if (expectedValue !== studentValue) {
+            this.sim.appendToLog(
+              `INFO: Incorrect answer for integer input "${inputId}". Correct answer is "${expectedValue}".`,
+            );
+            return CheckState.Mistakes;
+          }
           break;
         case 'int_set':
-          if (compareIntSets(expectedValue, studentValue) == false)
+          if (compareIntSets(expectedValue, studentValue) == false) {
+            this.sim.appendToLog(
+              `INFO: Incorrect answer for integer-set input "${inputId}". Correct answer is "${expectedValue}".`,
+            );
             return CheckState.Mistakes;
+          }
           break;
         default: {
           const msg =
@@ -117,6 +126,7 @@ class ExerciseData {
 
 export class Simulator {
   private log = '';
+  private logUpdateFunction: () => void = null;
 
   private course: MBL_Course = null;
   private exerciseData: { [exerciseId: string]: ExerciseData } = {};
@@ -147,14 +157,18 @@ export class Simulator {
     this.keyboardLayout_Term = createTermKeyboardLayout();
   }
 
+  public setLogUpdateFunction(f: () => void): void {
+    this.logUpdateFunction = f;
+  }
+
   public setCourse(course: MBL_Course): void {
     this.course = course;
   }
 
   public appendToLog(msg: string): void {
-    // TODO: update log in DOM
     console.log(msg);
-    this.log += msg;
+    this.log += msg + '\n';
+    this.logUpdateFunction();
   }
 
   public getLog(): string {
