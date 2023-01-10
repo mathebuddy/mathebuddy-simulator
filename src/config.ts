@@ -36,3 +36,18 @@ export function createIntegerKeyboardLayout(operators = false): KeyboardLayout {
   layout.addKey(2, operators ? 4 : 3, 2, 1, '!ENTER!');
   return layout;
 }
+
+/*
+  7 8 9 + B
+  4 5 6 - B
+  1 2 3 * E
+  0 0 . / E
+ */
+export function createRealNumberKeyboardLayout(
+  operators = false,
+): KeyboardLayout {
+  const layout = createIntegerKeyboardLayout(operators);
+  layout.addKey(3, 0, 1, 2, '0');
+  layout.addKey(3, 2, 1, 1, '.');
+  return layout;
+}
