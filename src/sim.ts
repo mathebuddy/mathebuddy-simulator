@@ -39,11 +39,13 @@ import {
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
 import {
   createIntegerKeyboardLayout,
+  createIntegerSetKeyboardLayout,
   createRealNumberKeyboardLayout,
   createTermKeyboardLayout,
 } from './config';
 import { htmlSafeString } from './html';
 import { Keyboard, KeyboardLayout } from './keyboard';
+import { compareIntSets } from './math';
 
 import { MathJax } from './mathjax';
 import { matrix2tex, set2tex, term2tex } from './tex';
@@ -52,11 +54,6 @@ const yellow = '#ceab39';
 const red = '#c56663';
 const green = '#b1c752';
 const blue = '#1800d8';
-
-const inputColorRed = red;
-const inputColorYellow = yellow;
-const inputColorGreen = green;
-const inputColorBlue = blue;
 
 enum CheckState {
   AllCorrect = 'all-correct',
@@ -101,6 +98,10 @@ class ExerciseData {
         case 'int':
           if (expectedValue !== studentValue) return CheckState.Mistakes;
           break;
+        case 'int_set':
+          if (compareIntSets(expectedValue, studentValue) == false)
+            return CheckState.Mistakes;
+          break;
         default: {
           const msg =
             'Error: ExerciseData.check(): unimplemented type: ' + expectedType;
@@ -131,6 +132,7 @@ export class Simulator {
 
   private keyboard: Keyboard = null;
   private keyboardLayout_Integer: KeyboardLayout = null;
+  private keyboardLayout_IntegerSet: KeyboardLayout = null;
   private keyboardLayout_Real: KeyboardLayout = null;
   private keyboardLayout_Term: KeyboardLayout = null;
 
@@ -140,6 +142,7 @@ export class Simulator {
 
     this.keyboard = new Keyboard(keyboardElement);
     this.keyboardLayout_Integer = createIntegerKeyboardLayout();
+    this.keyboardLayout_IntegerSet = createIntegerSetKeyboardLayout();
     this.keyboardLayout_Real = createRealNumberKeyboardLayout();
     this.keyboardLayout_Term = createTermKeyboardLayout();
   }
@@ -563,7 +566,7 @@ export class Simulator {
         const element = document.createElement('span');
         data.htmlElements[input.input_id] = element;
         element.style.fontSize = '18pt';
-        element.style.color = inputColorYellow;
+        element.style.color = yellow;
         element.style.verticalAlign = 'center';
         element.style.paddingLeft = '3px';
         element.innerHTML =
@@ -589,11 +592,23 @@ export class Simulator {
               }
             });
             this.keyboard.setInputText(_data.studentValues[input.input_id]);
-            //this.keyboard.show(this.keyboardLayout_Integer, false);
-            this.keyboard.show(this.keyboardLayout_Term, true); // TODO: reset to integer!!
+
+            const type = data.expectedTypes[input.input_id];
+            switch (type) {
+              case 'int':
+                this.keyboard.show(this.keyboardLayout_Integer, false);
+                break;
+              case 'int_set':
+                this.keyboard.show(this.keyboardLayout_IntegerSet, true);
+                break;
+              default:
+                this.keyboard.show(this.keyboardLayout_Term, true);
+                this.appendToLog('text_input: unimplemented type ' + type);
+            }
+
             const solution = _data.expectedValues[input.input_id];
             this.keyboard.setSolutionText(
-              `<i class="fa-regular fa-lightbulb"></i> &nbsp; ${solution}`,
+              `&nbsp;<i class="fa-regular fa-lightbulb"></i>&nbsp;${solution}`,
             );
           });
         }
@@ -634,7 +649,7 @@ export class Simulator {
             '<i class="fa-regular fa-circle-question" ></i>' + solutionHint;
           tdCheck.style.cursor = 'crosshair';
           tdCheck.style.fontSize = '18pt';
-          tdCheck.style.color = inputColorYellow;
+          tdCheck.style.color = yellow;
 
           {
             const _inputId = option.input_id;
