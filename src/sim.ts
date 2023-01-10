@@ -37,7 +37,11 @@ import {
   MBL_Text_Span,
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
-import { createIntegerKeyboardLayout as createKeyboardLayout_Integer } from './config';
+import {
+  createIntegerKeyboardLayout,
+  createRealNumberKeyboardLayout,
+  createTermKeyboardLayout,
+} from './config';
 import { htmlSafeString } from './html';
 import { Keyboard, KeyboardLayout } from './keyboard';
 
@@ -47,10 +51,12 @@ import { matrix2tex, set2tex, term2tex } from './tex';
 const yellow = '#ceab39';
 const red = '#c56663';
 const green = '#b1c752';
+const blue = '#1800d8';
 
 const inputColorRed = red;
 const inputColorYellow = yellow;
 const inputColorGreen = green;
+const inputColorBlue = blue;
 
 enum CheckState {
   AllCorrect = 'all-correct',
@@ -64,9 +70,17 @@ class ExerciseData {
   expectedValues: { [inputId: string]: string } = {};
   expectedTypes: { [inputId: string]: string } = {};
   studentValues: { [inputId: string]: string } = {};
+  htmlElements: { [inputId: string]: HTMLElement } = {};
 
   constructor(sim: Simulator) {
     this.sim = sim;
+  }
+
+  colorizeHTMLElements(color: string): void {
+    for (const inputId in this.htmlElements) {
+      const htmlElement = this.htmlElements[inputId];
+      htmlElement.style.color = color;
+    }
   }
 
   check(): CheckState {
@@ -77,7 +91,12 @@ class ExerciseData {
       switch (expectedType) {
         case 'bool':
           if (studentValue === 'unset') return CheckState.Incomplete;
-          if (expectedValue !== studentValue) return CheckState.Mistakes;
+          if (expectedValue !== studentValue) {
+            this.sim.appendToLog(
+              `INFO: Incorrect answer for boolean input "${inputId}". Correct answer is "${expectedValue}".`,
+            );
+            return CheckState.Mistakes;
+          }
           break;
         case 'int':
           if (expectedValue !== studentValue) return CheckState.Mistakes;
@@ -112,13 +131,17 @@ export class Simulator {
 
   private keyboard: Keyboard = null;
   private keyboardLayout_Integer: KeyboardLayout = null;
+  private keyboardLayout_Real: KeyboardLayout = null;
+  private keyboardLayout_Term: KeyboardLayout = null;
 
   constructor(parent: HTMLElement, keyboardElement: HTMLElement) {
     this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
 
     this.keyboard = new Keyboard(keyboardElement);
-    this.keyboardLayout_Integer = createKeyboardLayout_Integer();
+    this.keyboardLayout_Integer = createIntegerKeyboardLayout();
+    this.keyboardLayout_Real = createRealNumberKeyboardLayout();
+    this.keyboardLayout_Term = createTermKeyboardLayout();
   }
 
   public setCourse(course: MBL_Course): void {
@@ -126,6 +149,8 @@ export class Simulator {
   }
 
   public appendToLog(msg: string): void {
+    // TODO: update log in DOM
+    console.log(msg);
     this.log += msg;
   }
 
@@ -251,6 +276,7 @@ export class Simulator {
           this.currentExercise.title;
         content.appendChild(this.generateTextItem(this.currentExercise.text));
 
+        // evaluate
         const checkButton = document.createElement('div');
         element.appendChild(checkButton);
         checkButton.classList.add('w-100', 'text-center');
@@ -268,14 +294,25 @@ export class Simulator {
                 _element.style.borderColor = green;
                 _checkButton.style.backgroundColor = green;
                 _checkButton.innerHTML = '<i class="fa-solid fa-check"></i>';
+                _data.colorizeHTMLElements(green);
                 break;
               case CheckState.Mistakes:
                 _element.style.borderColor = red;
                 _checkButton.style.backgroundColor = red;
                 _checkButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                _data.colorizeHTMLElements(yellow);
+                setTimeout(() => {
+                  checkButton.innerHTML =
+                    '<i class="fa-solid fa-question"></i>';
+                }, 1000);
                 break;
               case CheckState.Incomplete:
                 _checkButton.innerHTML = '<i class="fa-solid fa-hammer"></i>';
+                _data.colorizeHTMLElements(yellow);
+                setTimeout(() => {
+                  checkButton.innerHTML =
+                    '<i class="fa-solid fa-question"></i>';
+                }, 1000);
                 break;
             }
           });
@@ -503,9 +540,8 @@ export class Simulator {
       }
       case 'text_input': {
         const input = <MBL_Exercise_Text_Input>item;
+
         // TODO: depends on type, ...
-        //const element = document.createElement('input');
-        //element.classList.add('m-1');
 
         const data = this.currentExerciseData;
         if (this.currentExercise.instances.length > 0) {
@@ -525,6 +561,7 @@ export class Simulator {
         }
 
         const element = document.createElement('span');
+        data.htmlElements[input.input_id] = element;
         element.style.fontSize = '18pt';
         element.style.color = inputColorYellow;
         element.style.verticalAlign = 'center';
@@ -535,15 +572,29 @@ export class Simulator {
           const _exerciseElement = this.currentExerciseHTMLElement;
           const _data = data;
           element.addEventListener('click', () => {
-            // TODO: scroll with offset: https://stackoverflow.com/questions/49820013/javascript-scrollintoview-smooth-scroll-and-offset
-            _exerciseElement.scrollIntoView();
+            _exerciseElement.scrollIntoView({
+              behavior: 'smooth',
+            });
             // TODO: select keyboard layout!
             this.keyboard.setInputText('');
             this.keyboard.setListener((text: string): void => {
               _data.studentValues[input.input_id] = text;
-              element.innerHTML = text;
+              if (text.trim().length === 0) {
+                element.innerHTML =
+                  '&nbsp;&nbsp;<b><i class="fa-regular fa-keyboard" style="cursor:crosshair;"></i></b>&nbsp;&nbsp;';
+              } else {
+                element.innerHTML = this.mathjaxInst.tex2svgBlock(
+                  term2tex(text),
+                );
+              }
             });
-            this.keyboard.show(this.keyboardLayout_Integer, false);
+            this.keyboard.setInputText(_data.studentValues[input.input_id]);
+            //this.keyboard.show(this.keyboardLayout_Integer, false);
+            this.keyboard.show(this.keyboardLayout_Term, true); // TODO: reset to integer!!
+            const solution = _data.expectedValues[input.input_id];
+            this.keyboard.setSolutionText(
+              `<i class="fa-regular fa-lightbulb"></i> &nbsp; ${solution}`,
+            );
           });
         }
         return element;
@@ -565,12 +616,22 @@ export class Simulator {
           const tr = document.createElement('tr');
           tr.classList.add('p-1');
           element.appendChild(tr);
+
           // check box
           const tdCheck = document.createElement('td');
           tdCheck.classList.add('p-1');
+          tdCheck.style.minWidth = '42px';
           tr.appendChild(tdCheck);
 
-          tdCheck.innerHTML = '<i class="fa-regular fa-circle" ></i>';
+          data.htmlElements[option.input_id] = tdCheck;
+
+          const correct = data.expectedValues[option.input_id] === 'true';
+          const solutionHint = `<span style="font-size:8pt;"><i class="fa-${
+            correct ? 'solid' : 'regular'
+          } fa-lightbulb"></i></span>`;
+
+          tdCheck.innerHTML =
+            '<i class="fa-regular fa-circle-question" ></i>' + solutionHint;
           tdCheck.style.cursor = 'crosshair';
           tdCheck.style.fontSize = '18pt';
           tdCheck.style.color = inputColorYellow;
@@ -584,14 +645,14 @@ export class Simulator {
                 case 'false': {
                   tdCheck.innerHTML =
                     '<i class="fa-regular fa-circle-check" ></i>';
-                  tdCheck.style.color = inputColorGreen;
+                  //tdCheck.style.color = inputColorBlue; // inputColorGreen;
                   _data.studentValues[_inputId] = 'true';
                   break;
                 }
                 case 'true': {
                   tdCheck.innerHTML =
                     '<i class="fa-regular fa-circle-xmark" ></i>';
-                  tdCheck.style.color = inputColorRed;
+                  //tdCheck.style.color = inputColorBlue; //inputColorRed;
                   _data.studentValues[_inputId] = 'false';
                   break;
                 }
