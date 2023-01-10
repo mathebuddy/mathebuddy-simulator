@@ -37,7 +37,6 @@ import {
   MBL_Text_Span,
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
-import { stringify } from 'querystring';
 import { createIntegerKeyboardLayout as createKeyboardLayout_Integer } from './config';
 import { htmlSafeString } from './html';
 import { Keyboard, KeyboardLayout } from './keyboard';
