@@ -263,15 +263,29 @@ export class Simulator {
         return element;
       }
       case 'exercise': {
+        // handle error
+        if ((<MBL_Exercise>item).error.length > 0) {
+          const ex = <MBL_Exercise>item;
+          const message = ex.error;
+          const element = document.createElement('div');
+          element.classList.add('col', 'mb-3', 'p-1');
+          element.style.backgroundColor = '#FF0000';
+          const p = document.createElement('p');
+          element.appendChild(p);
+          p.innerHTML =
+            'EXERCISE "' + ex.title + '" contains ERROR(s): <br/>' + message;
+          return element;
+        }
+        // get exercise data
         this.currentExercise = <MBL_Exercise>item;
         this.currentExerciseInstanceIndex = Math.floor(
           Math.random() * this.currentExercise.instances.length,
         );
-
         const data = new ExerciseData(this);
         this.exerciseData[this.currentExercise.label] = data;
         this.currentExerciseData = data;
-
+        // create DOM elements
+        // (a) outer DIV
         const element = document.createElement('div');
         this.currentExerciseHTMLElement = element;
         element.classList.add('col', 'mb-3', 'p-0');
@@ -280,11 +294,11 @@ export class Simulator {
         element.style.borderStyle = 'solid';
         element.style.borderRadius = '8px';
         element.style.borderColor = yellow;
-
+        // (b) inner DIV
         const content = document.createElement('div');
         content.classList.add('px-2');
         element.appendChild(content);
-
+        // (c) title
         const title = document.createElement('h4');
         content.appendChild(title);
         title.classList.add('text-start', 'pt-2');
@@ -292,14 +306,14 @@ export class Simulator {
           '<span style="font-size:14pt">&nbsp;<i class="fa-solid fa-pencil"></i></span>&nbsp;' +
           this.currentExercise.title;
         content.appendChild(this.generateTextItem(this.currentExercise.text));
-
-        // evaluate
+        // (d) evaluation button
         const checkButton = document.createElement('div');
         element.appendChild(checkButton);
         checkButton.classList.add('w-100', 'text-center');
         checkButton.style.backgroundColor = yellow;
         checkButton.style.cursor = 'pointer';
         checkButton.style.fontSize = '16pt';
+        // check button behavior
         checkButton.innerHTML = '<i class="fa-solid fa-question"></i>';
         {
           const _data = this.currentExerciseData;
@@ -334,10 +348,7 @@ export class Simulator {
             }
           });
         }
-
-        // TODO: remove following line
-        console.log(data);
-
+        // return DOM element
         return element;
       }
       case 'table': {
@@ -558,14 +569,15 @@ export class Simulator {
       case 'text_input': {
         const input = <MBL_Exercise_Text_Input>item;
 
-        // TODO: depends on type, ...
-
         const data = this.currentExerciseData;
         if (this.currentExercise.instances.length > 0) {
           data.expectedValues[input.input_id] =
             this.currentExercise.instances[
               this.currentExerciseInstanceIndex
             ].values[input.variable];
+
+          //console.log(this.currentExercise.title);
+
           data.expectedTypes[input.input_id] =
             this.currentExercise.variables[input.variable].type;
           data.studentValues[input.input_id] = '';
