@@ -44,6 +44,10 @@ export function createSim(root: HTMLElement, keyboard: HTMLElement): Simulator {
   return sim;
 }
 
+export function setLogUpdateFunction(sim: Simulator, f: () => void): void {
+  sim.setLogUpdateFunction(f);
+}
+
 export function setCourse(sim: Simulator, course: MBL_Course): void {
   sim.setCourse(course);
 }
