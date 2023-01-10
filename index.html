@@ -263,7 +263,9 @@
       var files = [];
       var selectedFileIndex = -1;
 
-      function logLog(log) {
+      var log = '';
+
+      function logLog() {
         logContent.innerHTML = '<div class="text-white">' + log + '</div>';
       }
 
@@ -384,15 +386,16 @@
           const files = response.data;
           const course = mathebuddySIM.compile(path, files);
           if (course == null) {
-            const compilerLog = mathebuddySIM.getCompilerLog();
-            logLog(compilerLog);
+            log = mathebuddySIM.getCompilerLog();
+            logLog();
           } else {
             sim = mathebuddySIM.createSim(deviceContent, keyboard);
             sim.setCourse(course);
             if (mathebuddySIM.generateDOM(sim) == false) {
               console.log('ERROR: failed to generate DOM');
             }
-            logLog(mathebuddySIM.getLOG(sim));
+            log = mathebuddySIM.getLOG(sim);
+            logLog();
           }
           mblCode = files[path];
         });
