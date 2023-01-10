@@ -72,6 +72,10 @@ export class KeyboardLayout {
         key.text = value;
     }
   }
+
+  removeKey(rowIndex: number, columnIndex: number): void {
+    this.keys[rowIndex * this.cols + columnIndex] = null;
+  }
 }
 
 export class Keyboard {
@@ -110,11 +114,11 @@ export class Keyboard {
   show(layout: KeyboardLayout, showPreview: boolean): void {
     this.parent.innerHTML = '';
     // div row
-    const row = document.createElement('div');
+    let row = document.createElement('div');
     row.classList.add('row');
     this.parent.appendChild(row);
     // div column
-    const col = document.createElement('div');
+    let col = document.createElement('div');
     row.appendChild(col);
     col.classList.add('col', 'text-center');
     // typed input
@@ -158,6 +162,7 @@ export class Keyboard {
         td.style.paddingTop = '0px';
         td.style.paddingRight = '7px';
         td.style.paddingBottom = '0px';
+        td.style.minWidth = '32px';
         //td.style.maxHeight = '14px';
         td.style.fontSize = '17pt';
         td.style.cursor = 'crosshair';
@@ -190,6 +195,12 @@ export class Keyboard {
     }
     col.appendChild(table);
     // solution preview (for debugging purposes)
+    row = document.createElement('div');
+    row.classList.add('row');
+    this.parent.appendChild(row);
+    col = document.createElement('div');
+    col.classList.add('col', 'text-start');
+    row.appendChild(col);
     this.solutionHTMLElement = document.createElement('span');
     this.solutionHTMLElement.innerHTML = '';
     this.solutionHTMLElement.style.marginTop = '0pt';
