@@ -390,6 +390,10 @@
             logLog();
           } else {
             sim = mathebuddySIM.createSim(deviceContent, keyboard);
+            mathebuddySIM.setLogUpdateFunction(sim, () => {
+              log = mathebuddySIM.getLOG(sim);
+              logLog();
+            });
             sim.setCourse(course);
             if (mathebuddySIM.generateDOM(sim) == false) {
               console.log('ERROR: failed to generate DOM');
