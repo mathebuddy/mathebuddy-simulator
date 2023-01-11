@@ -27,6 +27,50 @@ export class KeyboardLayout {
     for (let k = 0; k < n; k++) this.keys.push(null);
   }
 
+  static parse(src: string): KeyboardLayout {
+    // TODO: error checks
+    const lines = src.split('\n');
+    const rowData: string[][] = [];
+    for (let line of lines) {
+      line = line.trim();
+      if (line.length == 0) continue;
+      const tokens = line.split(' ');
+      const row: string[] = [];
+      for (let token of tokens) {
+        token = token.trim();
+        if (token.length > 0) row.push(token);
+      }
+      rowData.push(row);
+    }
+    const numRows = rowData.length;
+    const numCols = rowData[0].length;
+    const layout = new KeyboardLayout(numRows, numCols);
+    const processedIndices: string[] = [];
+    for (let i = 0; i < numRows; i++) {
+      for (let j = 0; j < numCols; j++) {
+        const data = rowData[i][j];
+        const idx = '' + i + ',' + j;
+        if (processedIndices.includes(idx)) continue;
+        let rowSpan = 1;
+        let colSpan = 1;
+        for (let k = i; k < numRows; k++) {
+          for (let l = j; l < numCols; l++) {
+            const data2 = rowData[k][l];
+            const idx2 = '' + k + ',' + l;
+            if (data === data2) {
+              processedIndices.push(idx2);
+              if (k - i + 1 > rowSpan) rowSpan = k - i + 1;
+              if (l - j + 1 > colSpan) colSpan = l - j + 1;
+            }
+          }
+        }
+        layout.addKey(i, j, rowSpan, colSpan, data);
+        processedIndices.push(idx);
+      }
+    }
+    return layout;
+  }
+
   resize(numRowsNew: number, numColsNew: number): void {
     const keysNew: KeyboardKey[] = [];
     for (let k = 0; k < numRowsNew * numColsNew; k++) keysNew.push(null);
@@ -59,10 +103,10 @@ export class KeyboardLayout {
       case '*':
         key.text = '&bullet;';
         break;
-      case '!BACKSPACE!':
+      case '!B': // backspace
         key.text = '<i class="fa-solid fa-delete-left"></i>';
         break;
-      case '!ENTER!':
+      case '!E': // enter
         key.text = '<i class="fa-solid fa-check-double"></i>';
         break;
       case 'pi':
@@ -173,7 +217,7 @@ export class Keyboard {
           const _value = key.value;
           td.addEventListener('click', () => {
             switch (_value) {
-              case '!BACKSPACE!':
+              case '!B': // backspace
                 if (this.inputText.length > 0) {
                   this.inputText = this.inputText.substring(
                     0,
@@ -181,7 +225,7 @@ export class Keyboard {
                   );
                 }
                 break;
-              case '!ENTER!':
+              case '!E': // enter
                 this.hide();
                 break;
               default:
