@@ -38,13 +38,14 @@ import {
   MBL_Text_Text,
 } from '@mathebuddy/mathebuddy-compiler/src/dataText';
 import {
-  createIntegerKeyboardLayout,
-  createIntegerSetKeyboardLayout,
-  createRealNumberKeyboardLayout,
-  createTermKeyboardLayout,
-} from './config';
+  complexNormalFormKeyboardLayout,
+  integerKeyboardLayout,
+  integerSetKeyboardLayout,
+  termKeyboardLayout,
+} from './keyboardLayouts';
+
 import { htmlSafeString } from './html';
-import { Keyboard, KeyboardLayout } from './keyboard';
+import { Keyboard } from './keyboard';
 import { compareIntSets } from './math';
 
 import { MathJax } from './mathjax';
@@ -53,7 +54,7 @@ import { matrix2tex, set2tex, term2tex } from './tex';
 const yellow = '#ceab39';
 const red = '#c56663';
 const green = '#b1c752';
-const blue = '#1800d8';
+//const blue = '#1800d8';
 
 enum CheckState {
   AllCorrect = 'all-correct',
@@ -141,20 +142,12 @@ export class Simulator {
   private parentDOM: HTMLElement = null;
 
   private keyboard: Keyboard = null;
-  private keyboardLayout_Integer: KeyboardLayout = null;
-  private keyboardLayout_IntegerSet: KeyboardLayout = null;
-  private keyboardLayout_Real: KeyboardLayout = null;
-  private keyboardLayout_Term: KeyboardLayout = null;
 
   constructor(parent: HTMLElement, keyboardElement: HTMLElement) {
     this.parentDOM = parent;
     this.mathjaxInst = new MathJax();
 
     this.keyboard = new Keyboard(keyboardElement);
-    this.keyboardLayout_Integer = createIntegerKeyboardLayout();
-    this.keyboardLayout_IntegerSet = createIntegerSetKeyboardLayout();
-    this.keyboardLayout_Real = createRealNumberKeyboardLayout();
-    this.keyboardLayout_Term = createTermKeyboardLayout();
   }
 
   public setLogUpdateFunction(f: () => void): void {
@@ -622,13 +615,16 @@ export class Simulator {
             const type = data.expectedTypes[input.input_id];
             switch (type) {
               case 'int':
-                this.keyboard.show(this.keyboardLayout_Integer, false);
+                this.keyboard.show(integerKeyboardLayout, false);
                 break;
               case 'int_set':
-                this.keyboard.show(this.keyboardLayout_IntegerSet, true);
+                this.keyboard.show(integerSetKeyboardLayout, true);
+                break;
+              case 'complex':
+                this.keyboard.show(complexNormalFormKeyboardLayout, true);
                 break;
               default:
-                this.keyboard.show(this.keyboardLayout_Term, true);
+                this.keyboard.show(termKeyboardLayout, true);
                 this.appendToLog('text_input: unimplemented type ' + type);
             }
 
